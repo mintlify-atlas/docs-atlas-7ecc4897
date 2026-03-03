@@ -1,0 +1,95 @@
+{
+  "projectType": "general",
+  "projectName": "nvim-luffy",
+  "projectDescription": "A modern, feature-rich Neovim configuration with LSP, fuzzy finding, and git integration",
+  "theme": "aspen",
+  "primaryColor": "#FF6B6B",
+  "lightColor": "#FFE66D",
+  "darkColor": "#4ECDC4",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting Started",
+        "pages": [
+          "introduction",
+          "installation",
+          "quickstart"
+        ]
+      },
+      {
+        "group": "Configuration",
+        "pages": [
+          "configuration/overview",
+          "configuration/options",
+          "configuration/keymaps",
+          "configuration/autocommands"
+        ]
+      },
+      {
+        "group": "Plugin System",
+        "pages": [
+          "plugins/overview",
+          "plugins/lazy-nvim",
+          "plugins/managing-plugins"
+        ]
+      },
+      {
+        "group": "Core Features",
+        "pages": [
+          "features/lsp",
+          "features/autocomplete",
+          "features/file-navigation",
+          "features/fuzzy-finding",
+          "features/git-integration",
+          "features/formatting"
+        ]
+      },
+      {
+        "group": "Plugins Reference",
+        "pages": [
+          "plugins-reference/telescope",
+          "plugins-reference/nvim-tree",
+          "plugins-reference/harpoon",
+          "plugins-reference/treesitter",
+          "plugins-reference/mason",
+          "plugins-reference/neogit",
+          "plugins-reference/alpha",
+          "plugins-reference/flash",
+          "plugins-reference/trouble",
+          "plugins-reference/snacks"
+        ]
+      },
+      {
+        "group": "Customization",
+        "pages": [
+          "customization/colorschemes",
+          "customization/adding-plugins",
+          "customization/custom-keymaps",
+          "customization/lsp-servers"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "LSP integration with Mason for automatic server management",
+    "Fuzzy finding with Telescope for files, live grep, and more",
+    "File navigation with nvim-tree and Harpoon for quick file jumping",
+    "Git integration with Neogit and Diffview",
+    "Auto-completion with nvim-cmp and snippet support",
+    "Code formatting with Conform.nvim supporting multiple languages",
+    "Syntax highlighting with Treesitter",
+    "Flash.nvim for enhanced motion and navigation",
+    "Custom dashboard with Alpha-nvim featuring One Piece ASCII art",
+    "Preconfigured keymaps and autocommands for productivity"
+  ],
+  "publicApiSurface": [
+    "require('leyland.core')",
+    "require('leyland.lazy')",
+    "require('leyland.lsp')",
+    "require('leyland.core.options')",
+    "require('leyland.core.keymaps')",
+    "require('leyland.core.autocommands')",
+    "require('leyland.plugins')",
+    "require('leyland.plugins.lsp')"
+  ]
+}

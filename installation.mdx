@@ -1,0 +1,238 @@
+---
+title: Installation
+description: Set up nvim-luffy on your system
+---
+
+# Installation
+
+Get nvim-luffy up and running on your system with these step-by-step instructions.
+
+## Prerequisites
+
+Before installing nvim-luffy, ensure you have the following installed:
+
+<Steps>
+  <Step title="Neovim 0.9 or higher">
+    Check your version with `nvim --version`. If you need to upgrade:
+
+    **macOS (Homebrew)**:
+    ```bash
+    brew install neovim
+    ```
+
+    **Linux (AppImage)**:
+    ```bash
+    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+    chmod u+x nvim.appimage
+    sudo mv nvim.appimage /usr/local/bin/nvim
+    ```
+
+    **Arch Linux**:
+    ```bash
+    sudo pacman -S neovim
+    ```
+
+    **Ubuntu/Debian**:
+    ```bash
+    sudo add-apt-repository ppa:neovim-ppa/unstable
+    sudo apt update
+    sudo apt install neovim
+    ```
+  </Step>
+
+  <Step title="Git">
+    Required for cloning the configuration and plugin management:
+    ```bash
+    git --version
+    ```
+
+    If not installed, get it from [git-scm.com](https://git-scm.com/) or your package manager.
+  </Step>
+
+  <Step title="Node.js (for LSP servers)">
+    Many language servers require Node.js. Install version 16 or higher:
+
+    **macOS/Linux (using nvm)**:
+    ```bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+    nvm install --lts
+    ```
+
+    **macOS (Homebrew)**:
+    ```bash
+    brew install node
+    ```
+  </Step>
+
+  <Step title="A Nerd Font (recommended)">
+    For proper icon rendering in nvim-tree, Telescope, and other plugins:
+
+    1. Download a Nerd Font from [nerdfonts.com](https://www.nerdfonts.com/)
+    2. Popular choices: JetBrainsMono Nerd Font, FiraCode Nerd Font, Hack Nerd Font
+    3. Install the font on your system
+    4. Configure your terminal to use it
+
+    <Tip>
+      If icons don't display correctly, this is usually the issue!
+    </Tip>
+  </Step>
+
+  <Step title="Ripgrep (for Telescope live_grep)">
+    Required for project-wide text search:
+
+    **macOS**:
+    ```bash
+    brew install ripgrep
+    ```
+
+    **Linux**:
+    ```bash
+    # Debian/Ubuntu
+    sudo apt install ripgrep
+
+    # Arch
+    sudo pacman -S ripgrep
+    ```
+  </Step>
+</Steps>
+
+## Installation Steps
+
+<Steps>
+  <Step title="Backup existing Neovim configuration">
+    If you have an existing Neovim config, back it up first:
+
+    ```bash
+    mv ~/.config/nvim ~/.config/nvim.backup
+    mv ~/.local/share/nvim ~/.local/share/nvim.backup
+    mv ~/.local/state/nvim ~/.local/state/nvim.backup
+    mv ~/.cache/nvim ~/.cache/nvim.backup
+    ```
+
+    <Note>
+      This ensures you can restore your previous setup if needed.
+    </Note>
+  </Step>
+
+  <Step title="Clone the repository">
+    Clone nvim-luffy to your Neovim config directory:
+
+    ```bash
+    git clone https://github.com/YOUR_USERNAME/nvim-luffy.git ~/.config/nvim
+    ```
+
+    <Tip>
+      Replace `YOUR_USERNAME` with the actual repository owner.
+    </Tip>
+  </Step>
+
+  <Step title="Launch Neovim">
+    Start Neovim for the first time:
+
+    ```bash
+    nvim
+    ```
+
+    **What happens now:**
+    - lazy.nvim (plugin manager) will automatically bootstrap itself
+    - All plugins will be cloned and installed
+    - Mason will install LSP servers and formatters
+    - Treesitter will download and compile parsers
+
+    This initial setup takes 2-5 minutes depending on your internet connection.
+
+    <Note>
+      You may see some error messages on the first launch - this is normal! They'll disappear once all plugins are installed.
+    </Note>
+  </Step>
+
+  <Step title="Wait for installation to complete">
+    Watch the lazy.nvim UI as plugins install. Once complete:
+    1. Press `q` to close the lazy.nvim window
+    2. Quit Neovim with `:q`
+    3. Restart Neovim
+
+    Your configuration is now ready to use!
+  </Step>
+
+  <Step title="Verify LSP servers (optional)">
+    Check that language servers installed correctly:
+
+    1. Open Neovim
+    2. Run `:Mason`
+    3. Verify these packages are installed:
+       - **LSP Servers**: ts_ls, lua_ls, pyright, html, cssls, tailwindcss, eslint
+       - **Formatters**: prettier, stylua, black, isort
+       - **Linters**: pylint, eslint_d
+
+    Use `i` to install any missing packages, or they'll install automatically when you open relevant files.
+  </Step>
+</Steps>
+
+## Directory Structure
+
+After installation, your `~/.config/nvim` will have this structure:
+
+```
+~/.config/nvim/
+├── init.lua                    # Entry point - loads core modules
+└── lua/
+    └── leyland/                # Main configuration namespace
+        ├── core/               # Core editor configuration
+        │   ├── init.lua        # Core module loader
+        │   ├── options.lua     # Editor options (line numbers, tabs, etc.)
+        │   ├── keymaps.lua     # Global keymaps (leader, window management)
+        │   └── autocommands.lua # Auto commands
+        ├── lazy.lua            # lazy.nvim plugin manager setup
+        ├── lsp.lua             # LSP configuration loader
+        └── plugins/            # Plugin configurations
+            ├── init.lua        # Core dependencies (plenary, tmux nav)
+            ├── lsp/
+            │   ├── lsp.lua     # LSP config and keymaps
+            │   └── mason.lua   # Mason LSP installer
+            ├── telescope.lua   # Fuzzy finder
+            ├── nvim-tree.lua   # File explorer
+            ├── nvim-cmp.lua    # Completion engine
+            ├── treesitter.lua  # Syntax highlighting
+            ├── neogit.lua      # Git interface
+            ├── harpoon.lua     # File marks
+            ├── colorscheme.lua # Color themes
+            ├── formatting.lua  # Auto-formatting
+            ├── flash.lua       # Jump navigation
+            └── ... (other plugins)
+```
+
+### Understanding the Structure
+
+- **init.lua**: The entry point that loads `leyland.core`, `leyland.lazy`, and `leyland.lsp`
+- **lua/leyland/core/**: Editor behavior and global settings
+- **lua/leyland/plugins/**: Each plugin has its own file with configuration and keymaps
+- **lazy.lua**: Configures lazy.nvim to load plugins from `leyland.plugins` and `leyland.plugins.lsp`
+
+## Troubleshooting
+
+### Plugins didn't install
+Run `:Lazy sync` inside Neovim to retry installation.
+
+### LSP not working
+1. Run `:Mason` to check server status
+2. Install missing servers with `i`
+3. Restart Neovim
+4. Check `:LspInfo` in a source file
+
+### Icons not showing
+Install a Nerd Font and configure your terminal to use it.
+
+### Command not found errors
+Ensure Node.js, git, and ripgrep are in your PATH.
+
+### Telescope live_grep not working
+Install ripgrep: `brew install ripgrep` (macOS) or equivalent for your system.
+
+## Next Steps
+
+Now that nvim-luffy is installed, head over to the [Quickstart](/quickstart) guide to learn the essential keybindings and workflows!
+
+<Tip>
+  Your configuration is version-controlled with git. You can customize it freely and commit your changes!
+</Tip>

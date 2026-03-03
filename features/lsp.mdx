@@ -1,0 +1,150 @@
+---
+title: 'LSP Integration'
+description: 'Language Server Protocol configuration with automatic server installation via Mason'
+---
+
+## Overview
+
+nvim-luffy integrates Language Server Protocol (LSP) support through Mason and mason-lspconfig, providing automatic installation and configuration of language servers.
+
+## Architecture
+
+The LSP setup consists of three main components:
+
+1. **mason.nvim** - Package manager for LSP servers, formatters, and linters
+2. **mason-lspconfig.nvim** - Bridge between Mason and nvim-lspconfig
+3. **nvim-lspconfig** - LSP configuration plugin
+
+## Configured Language Servers
+
+The following LSP servers are automatically installed and configured:
+
+<ParamField path="ts_ls" type="Language Server">
+  TypeScript and JavaScript language server
+</ParamField>
+
+<ParamField path="html" type="Language Server">
+  HTML language server
+</ParamField>
+
+<ParamField path="cssls" type="Language Server">
+  CSS language server
+</ParamField>
+
+<ParamField path="tailwindcss" type="Language Server">
+  Tailwind CSS language server
+</ParamField>
+
+<ParamField path="svelte" type="Language Server">
+  Svelte language server
+</ParamField>
+
+<ParamField path="lua_ls" type="Language Server">
+  Lua language server (optimized for Neovim development)
+</ParamField>
+
+<ParamField path="graphql" type="Language Server">
+  GraphQL language server
+</ParamField>
+
+<ParamField path="emmet_ls" type="Language Server">
+  Emmet language server for HTML/CSS abbreviations
+</ParamField>
+
+<ParamField path="prismals" type="Language Server">
+  Prisma ORM language server
+</ParamField>
+
+<ParamField path="pyright" type="Language Server">
+  Python language server with type checking
+</ParamField>
+
+<ParamField path="eslint" type="Language Server">
+  ESLint language server for JavaScript/TypeScript linting
+</ParamField>
+
+## Automatic Installation
+
+LSP servers are automatically installed on first launch through mason-lspconfig:
+
+<Code>
+```lua
+ensure_installed = {
+  "ts_ls",
+  "html",
+  "cssls",
+  "tailwindcss",
+  "svelte",
+  "lua_ls",
+  "graphql",
+  "emmet_ls",
+  "prismals",
+  "pyright",
+  "eslint",
+}
+```
+</Code>
+
+<Note>
+All configured servers will be automatically downloaded and installed when you first open a file of the corresponding type.
+</Note>
+
+## Mason UI
+
+Mason provides a user interface to manage installed packages:
+
+- **✓** - Package installed
+- **➜** - Package pending installation
+- **✗** - Package not installed
+
+<Tip>
+Open the Mason UI with `:Mason` to manually install, update, or remove language servers.
+</Tip>
+
+## Additional Tools
+
+Beyond LSP servers, Mason also automatically installs development tools:
+
+<Code>
+```lua
+ensure_installed = {
+  "prettier",   -- Formatter for web languages
+  "stylua",     -- Lua formatter
+  "isort",      -- Python import sorter
+  "black",      -- Python formatter
+  "pylint",     -- Python linter
+  "eslint_d",   -- Fast ESLint daemon
+}
+```
+</Code>
+
+## LSP Capabilities
+
+All LSP servers are configured with enhanced capabilities from nvim-cmp:
+
+<Code>
+```lua
+local cmp_nvim_lsp = require("cmp_nvim_lsp")
+local capabilities = cmp_nvim_lsp.default_capabilities()
+
+vim.lsp.config("*", {
+  capabilities = capabilities,
+})
+```
+</Code>
+
+This enables:
+- Autocompletion with LSP suggestions
+- Snippet support
+- Advanced text editing capabilities
+
+## File Operations Integration
+
+LSP file operations are enhanced with `nvim-lsp-file-operations`, enabling:
+- Automatic LSP updates when renaming files
+- Import path updates when moving files
+- Workspace-aware file operations
+
+<Note>
+Source: `lua/leyland/plugins/lsp/mason.lua:6-18` and `lua/leyland/plugins/lsp/lsp.lua:8-18`
+</Note>

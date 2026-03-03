@@ -1,0 +1,158 @@
+---
+title: Plugin System Overview
+description: Understanding nvim-luffy's plugin architecture and installed plugins
+---
+
+## Architecture
+
+nvim-luffy uses **lazy.nvim** as its plugin manager, providing a modern, fast, and feature-rich plugin management system. The configuration follows a modular structure where each plugin or group of related plugins has its own configuration file.
+
+### Directory Structure
+
+```
+lua/leyland/
+├── lazy.lua                 # Plugin manager bootstrap
+└── plugins/
+    ├── init.lua            # Core plugins
+    ├── colorscheme.lua     # Theme configurations
+    ├── telescope.lua       # Fuzzy finder
+    ├── nvim-tree.lua       # File explorer
+    ├── nvim-cmp.lua        # Completion engine
+    ├── treesitter.lua      # Syntax highlighting
+    ├── harpoon.lua         # File navigation
+    ├── flash.lua           # Motion plugin
+    ├── neogit.lua          # Git client
+    ├── diffview.lua        # Diff viewer
+    ├── alpha.lua           # Dashboard
+    ├── snacks.nvim         # UI components
+    ├── trouble.lua         # Diagnostics list
+    ├── formatting.lua      # Code formatting
+    ├── autopairs.lua       # Auto pairs
+    └── lsp/
+        ├── lsp.lua         # LSP configurations
+        └── mason.lua       # LSP installer
+```
+
+<Note>
+All plugins are lazy-loaded by default, improving Neovim's startup time significantly.
+</Note>
+
+## Installed Plugins
+
+The following plugins are currently installed and locked to specific versions in `lazy-lock.json`:
+
+### LSP & Language Support
+
+| Plugin | Description |
+|--------|-------------|
+| `nvim-lspconfig` | Quickstart configs for Neovim LSP |
+| `mason.nvim` | Portable package manager for LSP servers, formatters, and linters |
+| `mason-lspconfig.nvim` | Bridge between mason.nvim and lspconfig |
+| `mason-tool-installer.nvim` | Automatic installation of LSP servers and tools |
+| `lazydev.nvim` | Faster LuaLS setup for Neovim development |
+| `nvim-lsp-file-operations` | File operations using LSP |
+
+### Completion & Snippets
+
+| Plugin | Description |
+|--------|-------------|
+| `nvim-cmp` | Autocompletion plugin |
+| `cmp-nvim-lsp` | LSP source for nvim-cmp |
+| `cmp-buffer` | Buffer words source |
+| `cmp-path` | Path completion source |
+| `LuaSnip` | Snippet engine |
+| `cmp_luasnip` | Luasnip completion source |
+| `friendly-snippets` | Preconfigured snippets collection |
+| `lspkind.nvim` | VSCode-like pictograms for completion |
+
+### Syntax & Treesitter
+
+| Plugin | Description |
+|--------|-------------|
+| `nvim-treesitter` | Treesitter configurations and abstraction layer |
+| `nvim-web-devicons` | File icons for various plugins |
+
+### Fuzzy Finding & Search
+
+| Plugin | Description |
+|--------|-------------|
+| `telescope.nvim` | Highly extendable fuzzy finder |
+| `telescope-fzf-native.nvim` | FZF sorter for telescope |
+| `fzf-lua` | Fast FZF implementation in Lua |
+| `mini.pick` | Minimal picker/selector |
+
+### Navigation & Motion
+
+| Plugin | Description |
+|--------|-------------|
+| `harpoon` | Quick file navigation (harpoon2 branch) |
+| `flash.nvim` | Navigate your code with search labels |
+| `nvim-tree.lua` | File explorer tree |
+| `vim-tmux-navigator` | Seamless navigation between Neovim and tmux |
+
+### Git Integration
+
+| Plugin | Description |
+|--------|-------------|
+| `neogit` | Magit for Neovim |
+| `diffview.nvim` | Single tabpage interface for reviewing diffs |
+
+### UI & Appearance
+
+| Plugin | Description |
+|--------|-------------|
+| `alpha-nvim` | Fast and customizable greeter/dashboard |
+| `snacks.nvim` | Collection of small QoL plugins |
+| `trouble.nvim` | Pretty list for diagnostics, references, and more |
+| `todo-comments.nvim` | Highlight and search for TODO comments |
+
+### Colorschemes
+
+| Plugin | Description |
+|--------|-------------|
+| `tokyonight.nvim` | Clean Tokyo Night theme |
+| `catppuccin` | Soothing pastel theme |
+| `rose-pine` | Natural pine, faux fur, and soho vibes |
+| `onedark.nvim` | Atom's iconic One Dark theme |
+| `bamboo.nvim` | Warm bamboo theme |
+| `modus-themes.nvim` | Elegant, highly legible themes |
+
+### Utilities
+
+| Plugin | Description |
+|--------|-------------|
+| `plenary.nvim` | Lua functions library (dependency for many plugins) |
+| `nvim-autopairs` | Autopairs for brackets, quotes, etc. |
+| `conform.nvim` | Lightweight formatting engine |
+
+## Plugin Loading Strategy
+
+<Tip>
+lazy.nvim automatically lazy-loads plugins based on events, commands, file types, and key mappings defined in each plugin's specification.
+</Tip>
+
+The plugin system uses two main import paths:
+
+1. **`leyland.plugins`** - General plugins (UI, navigation, git, etc.)
+2. **`leyland.plugins.lsp`** - LSP-related plugins
+
+This separation keeps LSP configurations isolated and easier to manage.
+
+## Features
+
+- **Automatic Installation**: lazy.nvim bootstraps itself on first run
+- **Version Locking**: `lazy-lock.json` ensures consistent plugin versions
+- **Lazy Loading**: Plugins load only when needed
+- **Update Checking**: Automatic check for updates (notifications disabled)
+- **Change Detection**: Monitors plugin spec changes (notifications disabled)
+
+## Next Steps
+
+<Steps>
+  <Step title="Learn about lazy.nvim">
+    Understand how the plugin manager works - [lazy.nvim](/plugins/lazy-nvim)
+  </Step>
+  <Step title="Manage your plugins">
+    Learn how to add, update, and remove plugins - [Managing Plugins](/plugins/managing-plugins)
+  </Step>
+</Steps>

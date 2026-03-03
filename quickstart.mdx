@@ -1,80 +1,308 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Master the essential nvim-luffy workflows and keybindings
 ---
 
-## Get started in three steps
+# Quickstart Guide
 
-Get your documentation site running locally and make your first customization.
+Get up to speed with nvim-luffy in minutes. This guide covers the essential keybindings and workflows you'll use every day.
 
-### Step 1: Set up your local environment
+## First Launch
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+When you first open Neovim after installation:
 
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+1. **lazy.nvim** automatically bootstraps and installs all plugins
+2. **Mason** downloads LSP servers and formatters in the background
+3. **Treesitter** compiles syntax parsers for your languages
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  The first launch may show some errors - this is normal! Close and reopen Neovim once installation completes.
+</Note>
+
+After the initial setup, launch times are near-instant thanks to lazy loading.
+
+## The Leader Key
+
+The **leader key** is `Space`. Almost all custom keybindings start with pressing the spacebar.
+
+<Tip>
+  Think of the leader key as your "command prefix" - it unlocks all the powerful features.
+</Tip>
+
+## Essential Keybindings
+
+### File Navigation
+
+<CodeGroup>
+```text Telescope (Fuzzy Finder)
+<Space><Space>  Find files in current directory
+<Space>/        Search text across project (live grep)
+<Space>fr       Find recent files
+<Space>fc       Find word under cursor
+<Space>ft       Find TODO comments
+<Space>fk       Find keymaps (discover more shortcuts!)
+```
+
+```text File Explorer
+<Space>e        Toggle nvim-tree file explorer
+
+# Inside nvim-tree:
+l               Open file/folder
+h               Close folder
+a               Create new file
+d               Delete file
+r               Rename file
+y               Copy file
+p               Paste file
+```
+
+```text Harpoon (Quick File Marks)
+<Space>H        Add current file to Harpoon
+<Space>h        Open Harpoon quick menu
+<Space>1-9      Jump to harpooned file 1-9
+```
+</CodeGroup>
+
+### Window Management
+
+```text
+<Space>|        Split window vertically
+<Space>sh       Split window horizontally
+Ctrl+h/j/k/l    Navigate between windows (works with tmux!)
+```
+
+<Tip>
+  The tmux navigation integration means you can move between Neovim splits and tmux panes with the same keybindings.
+</Tip>
+
+### Buffer Management
+
+```text
+<Space>bd       Close current buffer
+<Space>ba       Close all buffers
+```
+
+### Git Operations
+
+```text
+<Space>gg       Open Neogit (Git interface)
+```
+
+Inside Neogit:
+- `s` - Stage file/hunk
+- `u` - Unstage file/hunk
+- `c` - Commit (opens commit message buffer)
+- `P` - Push
+- `F` - Pull
+- `?` - Show help
+
+## LSP Features
+
+When editing code files with LSP support (TypeScript, Python, Lua, etc.):
+
+### Code Intelligence
+
+```text
+gd              Go to definition
+gr              Show references
+K               Show hover documentation
+<Space>ca       Code actions
+<Space>rn       Rename symbol
+<Space>D        Type definition
+[d              Previous diagnostic
+]d              Next diagnostic
+<Space>rs       Restart LSP server
+```
+
+### Completion
+
+In insert mode, completions appear automatically. Navigate them with:
+
+```text
+Ctrl+j          Next completion
+Ctrl+k          Previous completion
+Ctrl+Space      Trigger completion
+Tab             Select completion / expand snippet
+Enter           Confirm completion
+Ctrl+e          Close completion menu
+```
+
+## Telescope Deep Dive
+
+Telescope is your primary navigation tool. Inside any Telescope picker:
+
+```text
+Ctrl+j/k        Move up/down in results
+Ctrl+q          Send selected to quickfix list
+Enter           Open selection
+Esc             Close Telescope
+```
+
+### Typical Workflow
+
+1. **Find a file**: `<Space><Space>`, type partial filename, `Enter`
+2. **Search for text**: `<Space>/`, type search term, navigate with `Ctrl+j/k`
+3. **Jump to definition**: `gd` when cursor is on a symbol
+4. **Go back**: `Ctrl+o` (standard Neovim jump-back)
+
+## Harpoon Workflow
+
+Harpoon is perfect for working with a small set of frequently-accessed files:
+
+1. Open a file you use often
+2. Press `<Space>H` to "harpoon" it
+3. Repeat for up to 9 files
+4. Use `<Space>1` through `<Space>9` to instantly jump between them
+5. Press `<Space>h` to see all harpooned files
+
+<Tip>
+  Harpoon is great for rapidly switching between implementation and test files!
+</Tip>
+
+## Editing Workflows
+
+### Auto-formatting
+
+Code is automatically formatted on save using:
+- **prettier** for JavaScript/TypeScript/JSON/CSS/HTML
+- **stylua** for Lua
+- **black** and **isort** for Python
+
+No keybinding needed - just save the file!
+
+### Treesitter Text Objects
+
+Treesitter enables intelligent text objects:
+
+```text
+vaf             Select around function
+vif             Select inside function
+vac             Select around class
+vic             Select inside class
+```
+
+## Discovering More
+
+### Built-in Help
+
+```text
+<Space>fk       Find keymaps - search all available shortcuts
+:Lazy           Open plugin manager UI
+:Mason          Open LSP server manager
+:help <topic>   Neovim's built-in help
+```
+
+### Plugin-specific Help
+
+Many plugins show a help menu when you press `?` inside them:
+- Neogit: `<Space>gg` then `?`
+- Telescope: `<Space><Space>` then `Ctrl+/` (shows mappings)
+- nvim-tree: `<Space>e` then `g?`
+
+## Common Workflows
+
+### Starting a New Feature
+
+<Steps>
+  <Step title="Open your project">
+    ```bash
+    cd ~/projects/myapp
+    nvim .
+    ```
+  </Step>
+
+  <Step title="Find the file to edit">
+    Press `<Space><Space>`, type filename, `Enter`
+  </Step>
+
+  <Step title="Navigate to the function">
+    Use `/` to search, or `<Space>/` to search project-wide
+  </Step>
+
+  <Step title="Make your changes">
+    Use LSP features:
+    - `gd` to jump to definitions
+    - `K` to see documentation
+    - `<Space>ca` for code actions
+    - Let auto-completion help you
+  </Step>
+
+  <Step title="Review changes">
+    Press `<Space>gg` to open Neogit and see your diff
+  </Step>
+
+  <Step title="Stage and commit">
+    In Neogit:
+    - `s` to stage hunks
+    - `c` to commit
+    - Write message and save
+    - `P` to push
+  </Step>
+</Steps>
+
+### Debugging LSP Issues
+
+<Steps>
+  <Step title="Check if LSP is attached">
+    Run `:LspInfo` to see active language servers
+  </Step>
+
+  <Step title="Verify server is installed">
+    Run `:Mason` and check if the server is installed
+  </Step>
+
+  <Step title="Restart LSP">
+    Press `<Space>rs` to restart the language server
+  </Step>
+
+  <Step title="Check LSP logs">
+    Run `:LspLog` to see error messages
+  </Step>
+</Steps>
+
+### Working with Multiple Files
+
+1. **Harpoon for frequent files**: Mark your main files with `<Space>H`, jump with `<Space>1-9`
+2. **Telescope for searching**: Use `<Space><Space>` when you need to find something
+3. **LSP for navigation**: Use `gd` and `gr` to follow code references
+4. **Splits for side-by-side**: Use `<Space>|` to view two files at once
+
+## Editor Configuration
+
+key settings (from `lua/leyland/core/options.lua`):
+
+- **Leader key**: Space
+- **Tab size**: 2 spaces
+- **Line numbers**: Relative (easier for motions like `10j`)
+- **Search**: Case-insensitive unless you use capitals
+- **Clipboard**: Synced with system clipboard
+- **Splits**: Open right/below (more natural)
+- **No swap files**: Clean working directory
+
+## Customization Hints
+
+All keybindings are defined in:
+- **Global**: `lua/leyland/core/keymaps.lua`
+- **Plugin-specific**: Inside each plugin file in `lua/leyland/plugins/`
+
+To customize:
+1. Edit the relevant file
+2. Save
+3. Restart Neovim (or `:source %` to reload)
+
+<Tip>
+  Each keymap has a `desc` field - this is what shows up in `<Space>fk`!
+</Tip>
+
+## Next Steps
+
+Now that you know the basics:
+
+1. **Practice**: Use `<Space><Space>` and `<Space>/` until they're muscle memory
+2. **Explore**: Press `<Space>fk` to discover more keybindings
+3. **Customize**: Check out the [Configuration overview](/configuration/overview) guide
+4. **Learn**: Read about specific [Features](/features/lsp) you're interested in
+
+<Note>
+  The best way to learn is to use nvim-luffy for your daily work. The keybindings will become second nature within a week!
 </Note>

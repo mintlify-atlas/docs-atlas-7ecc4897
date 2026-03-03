@@ -1,0 +1,377 @@
+---
+title: Trouble
+description: Diagnostic and quickfix list viewer
+---
+
+Trouble is a modern diagnostic list viewer that provides a clean, organized interface for viewing LSP diagnostics, quickfix lists, and location lists in Neovim.
+
+## Purpose
+
+Trouble serves as the diagnostic interface in nvim-luffy:
+
+- Unified view of all diagnostics (errors, warnings, info, hints)
+- LSP diagnostic integration
+- Quickfix and location list enhancement
+- File grouping for better organization
+- Jump to errors without leaving the list
+
+<Note>
+Trouble replaces the traditional quickfix window with a modern, feature-rich interface that integrates seamlessly with LSP.
+</Note>
+
+## Configuration
+
+<Accordion title="View Full Configuration">
+```lua ~/workspace/source/lua/leyland/plugins/trouble.lua
+return {
+	"folke/trouble.nvim",
+	dependencies = { "nvim-tree/nvim-web-devicons" },
+	opts = {},
+	keys = {
+		{ "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Toggle Trouble" },
+	},
+}
+```
+</Accordion>
+
+## Key Features
+
+### Minimal Configuration
+
+Trouble uses sensible defaults:
+
+```lua
+opts = {}  -- Default configuration is excellent
+```
+
+No configuration needed for most use cases.
+
+### Icon Integration
+
+```lua
+dependencies = { "nvim-tree/nvim-web-devicons" }
+```
+
+Uses file type icons for better visual clarity.
+
+### Lazy Loading
+
+Trouble only loads when you first toggle it with `<leader>xx`.
+
+## Keybindings
+
+### Opening Trouble
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `<leader>xx` | Normal | Toggle Trouble | Open/close diagnostic list |
+
+<Tip>
+The mnemonic is easy: `xx` = "eXamine errors". Double-tap and see all diagnostics.
+</Tip>
+
+### Trouble Window Mappings
+
+Once Trouble is open, these keys control the interface:
+
+#### Navigation
+| Key | Action |
+|-----|--------|
+| `j`/`k` | Move up/down through items |
+| `<CR>` | Jump to diagnostic location |
+| `<Tab>` | Jump to location but keep focus on Trouble |
+| `q` | Close Trouble window |
+
+#### Filtering
+| Key | Action |
+|-----|--------|
+| `o` | Jump to item and close Trouble |
+| `?` | Show help |
+
+#### Folding
+| Key | Action |
+|-----|--------|
+| `zo` | Open fold |
+| `zc` | Close fold |
+| `za` | Toggle fold |
+| `zM` | Close all folds |
+| `zR` | Open all folds |
+
+## Usage Examples
+
+### Viewing All Diagnostics
+
+```plaintext
+1. Press <leader>xx to open Trouble
+2. See all diagnostics grouped by file:
+   ❌ Error (2)
+   ⚠️  Warning (5)
+   ℹ️  Info (1)
+   💡 Hint (3)
+3. Navigate with j/k
+4. Press Enter to jump to error
+```
+
+### Fixing Errors Workflow
+
+<Note>
+Trouble makes it easy to go through errors one by one without losing your place.
+</Note>
+
+```plaintext
+Systematic error fixing:
+1. <leader>xx to open diagnostics
+2. Press 'j' to select first error
+3. Press Tab to preview
+4. Press Enter to jump to code
+5. Fix the error
+6. Press <leader>xx to return to Trouble
+7. Repeat for next error
+```
+
+### File-Grouped View
+
+```plaintext
+Diagnostics are grouped by file:
+
+📄 src/components/Header.tsx (3)
+  ❌ Line 42: 'props' is not defined
+  ⚠️  Line 55: Unused variable 'count'
+  💡 Line 60: Consider using const
+
+📄 src/utils/api.ts (2)
+  ❌ Line 10: Type mismatch
+  ⚠️  Line 25: Missing return type
+
+Use zo/zc to collapse/expand files
+```
+
+### Quick Preview
+
+<Tip>
+Use Tab to preview errors without leaving Trouble. This is faster than jumping back and forth.
+</Tip>
+
+```plaintext
+1. Open Trouble with <leader>xx
+2. Navigate to an error
+3. Press Tab to preview in split
+4. File opens in split but focus stays in Trouble
+5. Navigate to next error
+6. Press Tab again to preview
+```
+
+### Jump and Close
+
+```plaintext
+Quick jump workflow:
+1. <leader>xx to open
+2. Navigate to error
+3. Press 'o' to jump and close Trouble
+4. Fix the issue
+5. <leader>xx to see remaining errors
+```
+
+## Diagnostic Types
+
+Trouble categorizes diagnostics:
+
+### Errors (❌)
+Critical issues that prevent code from working:
+- Syntax errors
+- Type errors
+- Undefined variables
+- Missing imports
+
+### Warnings (⚠️)
+Potential problems that don't break code:
+- Unused variables
+- Deprecated APIs
+- Style violations
+- Missing types
+
+### Info (ℹ️)
+Informational messages:
+- Suggestions
+- Code improvements
+- Documentation issues
+
+### Hints (💡)
+Suggestions for better code:
+- Refactoring opportunities
+- Performance improvements
+- Best practice recommendations
+
+## Integration with LSP
+
+Trouble automatically integrates with all configured LSP servers:
+
+```plaintext
+As you code:
+1. LSP servers analyze your code
+2. Diagnostics are generated
+3. Trouble collects them all
+4. <leader>xx shows complete picture
+
+Supported diagnostics from:
+- ts_ls (TypeScript/JavaScript)
+- eslint (Linting)
+- lua_ls (Lua)
+- pyright (Python)
+- All other Mason-installed servers
+```
+
+## Advanced Usage
+
+### Filter by Severity
+
+<Accordion title="Show Only Errors">
+Trouble can be configured to show specific severities:
+
+```lua
+-- Edit lua/leyland/plugins/trouble.lua
+opts = {
+  filter = {
+    severity = vim.diagnostic.severity.ERROR
+  }
+}
+```
+
+Or use commands:
+```vim
+:Trouble diagnostics filter.severity=vim.diagnostic.severity.ERROR
+```
+</Accordion>
+
+### Workspace vs Buffer Diagnostics
+
+```plaintext
+Trouble diagnostics toggle shows workspace diagnostics:
+- All files in project
+
+For current buffer only:
+:Trouble diagnostics filter.buf=0
+```
+
+### Using with Quickfix
+
+Trouble enhances quickfix lists:
+
+```plaintext
+1. Use Telescope to search
+2. Press Ctrl+q to send results to quickfix
+3. Run :Trouble quickfix
+4. Browse results in Trouble interface
+```
+
+## Workflow Recommendations
+
+### Pre-Commit Check
+
+<Tip>
+Before committing, check Trouble to ensure no errors remain.
+</Tip>
+
+```plaintext
+1. Finish coding
+2. <leader>xx to open Trouble
+3. Verify no errors or warnings
+4. Close Trouble with 'q'
+5. Commit with confidence
+```
+
+### TDD Workflow
+
+```plaintext
+Test-driven development:
+1. Write failing test
+2. <leader>xx to see test failure
+3. Write implementation
+4. Watch errors disappear from Trouble
+5. Refactor until Trouble is empty
+```
+
+### Refactoring
+
+```plaintext
+When refactoring:
+1. Make changes
+2. <leader>xx to see what broke
+3. Fix each error systematically
+4. Use Tab to preview without leaving list
+```
+
+## Customization
+
+### Change Keybinding
+
+<Accordion title="Custom Keybinding">
+```lua
+-- Edit lua/leyland/plugins/trouble.lua
+keys = {
+  { "<leader>td", "<cmd>Trouble diagnostics toggle<cr>", desc = "Toggle Diagnostics" },
+}
+```
+</Accordion>
+
+### Additional Modes
+
+<Accordion title="More Trouble Modes">
+Add keybindings for other Trouble modes:
+
+```lua
+keys = {
+  { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Toggle Trouble" },
+  { "<leader>xq", "<cmd>Trouble quickfix toggle<cr>", desc = "Quickfix List" },
+  { "<leader>xl", "<cmd>Trouble loclist toggle<cr>", desc = "Location List" },
+  { "<leader>xr", "<cmd>Trouble lsp_references toggle<cr>", desc = "LSP References" },
+}
+```
+</Accordion>
+
+## Troubleshooting
+
+### No Diagnostics Showing
+
+If Trouble opens but is empty:
+
+```vim
+:LspInfo        " Check if LSP is running
+:Mason          " Verify servers installed
+```
+
+### Diagnostics Not Updating
+
+<Note>
+Diagnostics update when you save files. Some LSP servers update on-the-fly.
+</Note>
+
+```vim
+:w              " Save to trigger diagnostics
+:e              " Reload file if needed
+```
+
+### Window Too Small
+
+Trouble opens in a split. Adjust size:
+
+```vim
+" While in Trouble window:
+Ctrl+w +        " Increase height
+Ctrl+w -        " Decrease height
+```
+
+## Performance
+
+Trouble is optimized for large projects:
+
+- Lazy loading (only loads when needed)
+- Efficient diagnostic collection
+- Smooth scrolling even with 100+ diagnostics
+- No impact on LSP performance
+
+## Related Plugins
+
+- [Mason](/plugins-reference/mason) - Installs LSP servers that provide diagnostics
+- [Telescope](/plugins-reference/telescope) - Provides quickfix lists
+- [Treesitter](/plugins-reference/treesitter) - Syntax awareness for diagnostics

@@ -1,0 +1,161 @@
+---
+title: 'Autocompletion'
+description: 'Intelligent code completion powered by nvim-cmp with LSP, snippets, and more'
+---
+
+## Overview
+
+nvim-luffy uses nvim-cmp for autocompletion, providing intelligent suggestions from multiple sources including LSP servers, snippets, buffer text, and file paths.
+
+## Completion Sources
+
+Completion suggestions are gathered from four primary sources:
+
+<ParamField path="nvim_lsp" type="Source" default="enabled">
+  Language server completions with full LSP capabilities
+</ParamField>
+
+<ParamField path="luasnip" type="Source" default="enabled">
+  Snippet completions from LuaSnip engine
+</ParamField>
+
+<ParamField path="buffer" type="Source" default="enabled">
+  Text completions from the current buffer
+</ParamField>
+
+<ParamField path="path" type="Source" default="enabled">
+  File system path completions
+</ParamField>
+
+## Configuration
+
+<Code>
+```lua
+sources = cmp.config.sources({
+  { name = "nvim_lsp" },
+  { name = "luasnip" },
+  { name = "buffer" },
+  { name = "path" },
+})
+```
+</Code>
+
+## Keybindings
+
+### Navigation
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<C-k>` | Previous item | Select previous completion suggestion |
+| `<C-j>` | Next item | Select next completion suggestion |
+| `<Tab>` | Next item / Expand | Select next item or expand snippet |
+
+### Documentation
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<C-b>` | Scroll up | Scroll documentation up |
+| `<C-f>` | Scroll down | Scroll documentation down |
+
+### Actions
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<C-Space>` | Trigger completion | Manually trigger completion menu |
+| `<C-e>` | Abort | Close completion window |
+| `<CR>` | Confirm | Confirm selected suggestion |
+
+<Code>
+```lua
+mapping = cmp.mapping.preset.insert({
+  ["<C-k>"] = cmp.mapping.select_prev_item(),
+  ["<C-j>"] = cmp.mapping.select_next_item(),
+  ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+  ["<C-f>"] = cmp.mapping.scroll_docs(4),
+  ["<C-Space>"] = cmp.mapping.complete(),
+  ["<C-e>"] = cmp.mapping.abort(),
+  ["<CR>"] = cmp.mapping.confirm({ select = false }),
+})
+```
+</Code>
+
+## Snippet Support
+
+Snippets are powered by LuaSnip with friendly-snippets collection:
+
+<Code>
+```lua
+snippet = {
+  expand = function(args)
+    luasnip.lsp_expand(args.body)
+  end,
+}
+```
+</Code>
+
+### Snippet Navigation
+
+The `<Tab>` key intelligently handles both completion and snippet expansion:
+
+<Code>
+```lua
+["<Tab>"] = cmp.mapping(function(fallback)
+  if cmp.visible() then
+    cmp.select_next_item()
+  elseif luasnip.expand_or_jumpable() then
+    luasnip.expand_or_jump()
+  else
+    fallback()
+  end
+end, { "i", "s" })
+```
+</Code>
+
+<Tip>
+Press `<Tab>` to navigate through snippet placeholders after expanding a snippet.
+</Tip>
+
+## Visual Formatting
+
+Completion menu items include VS Code-style pictograms via lspkind:
+
+<Code>
+```lua
+formatting = {
+  format = lspkind.cmp_format({
+    maxwidth = 50,
+    ellipsis_char = "...",
+  }),
+}
+```
+</Code>
+
+This provides visual indicators for:
+- Functions
+- Variables
+- Classes
+- Interfaces
+- Keywords
+- Snippets
+- And more
+
+## Dependencies
+
+The completion system relies on these plugins:
+
+- **nvim-cmp** - Completion engine
+- **cmp-nvim-lsp** - LSP source
+- **cmp-buffer** - Buffer text source
+- **cmp-path** - File path source
+- **LuaSnip** - Snippet engine
+- **cmp_luasnip** - Snippet source integration
+- **friendly-snippets** - Pre-built snippet collection
+- **lspkind.nvim** - Pictogram support
+
+<Note>
+Completion is triggered automatically in insert mode. Use `<C-Space>` to manually trigger suggestions at any time.
+</Note>
+
+<Note>
+Source: `lua/leyland/plugins/nvim-cmp.lua:28-67`
+</Note>

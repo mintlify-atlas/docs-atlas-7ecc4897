@@ -1,0 +1,327 @@
+---
+title: Mason
+description: LSP server, formatter, and linter installation manager
+---
+
+Mason is a package manager for Neovim that installs and manages LSP servers, formatters, linters, and other development tools. It provides a unified interface for managing all external tools your editor needs.
+
+## Purpose
+
+Mason simplifies tool management in nvim-luffy:
+
+- Automatic installation of LSP servers
+- Formatter and linter management
+- Cross-platform support (works on Windows, macOS, Linux)
+- Visual UI for browsing and installing tools
+- Automatic updates and version management
+
+<Note>
+Mason eliminates the need to manually install language servers and formatters system-wide. Everything is managed within Neovim.
+</Note>
+
+## Configuration
+
+<Accordion title="View Full Configuration">
+```lua ~/workspace/source/lua/leyland/plugins/lsp/mason.lua
+return {
+  {
+    "williamboman/mason-lspconfig.nvim",
+    opts = {
+      -- list of servers for mason to install
+      ensure_installed = {
+        "ts_ls",
+        "html",
+        "cssls",
+        "tailwindcss",
+        "svelte",
+        "lua_ls",
+        "graphql",
+        "emmet_ls",
+        "prismals",
+        "pyright",
+        "eslint",
+      },
+    },
+    dependencies = {
+      {
+        "williamboman/mason.nvim",
+        opts = {
+          ui = {
+            icons = {
+              package_installed = "✓",
+              package_pending = "➜",
+              package_uninstalled = "✗",
+            },
+          },
+        },
+      },
+      "neovim/nvim-lspconfig",
+    },
+  },
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    opts = {
+      ensure_installed = {
+        "prettier", -- prettier formatter
+        "stylua", -- lua formatter
+        "isort", -- python formatter
+        "black", -- python formatter
+        "pylint",
+        "eslint_d",
+      },
+    },
+    dependencies = {
+      "williamboman/mason.nvim",
+    },
+  },
+}
+```
+</Accordion>
+
+## Installed Language Servers
+
+nvim-luffy automatically installs these LSP servers:
+
+### JavaScript/TypeScript Ecosystem
+- **ts_ls** - TypeScript language server
+- **eslint** - JavaScript/TypeScript linting
+- **html** - HTML language server
+- **cssls** - CSS language server
+- **tailwindcss** - Tailwind CSS IntelliSense
+- **svelte** - Svelte language server
+- **emmet_ls** - Emmet abbreviation expansion
+- **graphql** - GraphQL language server
+- **prismals** - Prisma schema language server
+
+### Lua
+- **lua_ls** - Lua language server (for Neovim config)
+
+### Python
+- **pyright** - Python language server
+
+<Tip>
+This configuration is optimized for full-stack web development with JavaScript/TypeScript, but includes Python support as well.
+</Tip>
+
+## Installed Formatters & Linters
+
+Mason also manages formatters and linters:
+
+### Formatters
+- **prettier** - JavaScript, TypeScript, HTML, CSS, JSON, etc.
+- **stylua** - Lua code formatter
+- **black** - Python code formatter
+- **isort** - Python import sorter
+
+### Linters
+- **eslint_d** - Fast ESLint daemon for JavaScript/TypeScript
+- **pylint** - Python linter
+
+## Mason UI
+
+### Opening Mason
+
+```vim
+:Mason
+```
+
+This opens the Mason UI showing:
+- ✓ Installed packages
+- ➜ Pending installations
+- ✗ Available packages
+
+### UI Navigation
+
+| Key | Action |
+|-----|--------|
+| `i` | Install package under cursor |
+| `u` | Update package under cursor |
+| `U` | Update all packages |
+| `X` | Uninstall package under cursor |
+| `/` | Search packages |
+| `g?` | Show help |
+| `q` | Close UI |
+
+<Note>
+The Mason UI provides a convenient way to browse and install additional tools beyond what's pre-configured.
+</Note>
+
+## Key Settings
+
+### Auto-Installation
+
+Both LSP servers and tools are automatically installed on first launch:
+
+```lua
+ensure_installed = { ... }  -- Automatically installed
+```
+
+### Custom Icons
+
+```lua
+icons = {
+  package_installed = "✓",
+  package_pending = "➜",
+  package_uninstalled = "✗",
+}
+```
+
+Provides clear visual feedback in the Mason UI.
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `:Mason` | Open Mason UI |
+| `:MasonUpdate` | Update all Mason packages |
+| `:MasonInstall <package>` | Install specific package |
+| `:MasonUninstall <package>` | Remove package |
+| `:MasonLog` | View Mason log file |
+
+## Adding New Tools
+
+### Adding an LSP Server
+
+<Accordion title="Add Language Server">
+```lua
+-- Edit lua/leyland/plugins/lsp/mason.lua
+-- Add to mason-lspconfig ensure_installed:
+
+ensure_installed = {
+  "ts_ls",
+  "html",
+  -- ... existing servers ...
+  "rust_analyzer",  -- Add Rust support
+  "gopls",          -- Add Go support
+}
+```
+
+After editing:
+```vim
+:Mason           " Verify installation
+:LspInfo         " Check LSP status
+```
+</Accordion>
+
+### Adding a Formatter or Linter
+
+<Accordion title="Add Formatter/Linter">
+```lua
+-- Edit lua/leyland/plugins/lsp/mason.lua
+-- Add to mason-tool-installer ensure_installed:
+
+ensure_installed = {
+  "prettier",
+  "stylua",
+  -- ... existing tools ...
+  "shfmt",          -- Shell script formatter
+  "shellcheck",     -- Shell script linter
+}
+```
+
+Restart Neovim and the tools will be automatically installed.
+</Accordion>
+
+## Usage Examples
+
+### First Launch
+
+On first launch, Mason automatically installs all configured tools:
+
+```plaintext
+1. Open Neovim
+2. Mason downloads and installs:
+   - 11 LSP servers
+   - 6 formatters/linters
+3. Progress shown in status line
+4. Once complete, all tools ready to use
+```
+
+### Installing Additional Tools
+
+<Tip>
+You can install tools on-demand without editing the config file. Use `:Mason` to browse and install.
+</Tip>
+
+```plaintext
+1. Run :Mason
+2. Press / to search
+3. Type "rust" to find Rust tools
+4. Navigate to rust_analyzer
+5. Press 'i' to install
+6. Press 'q' to close
+```
+
+### Updating All Tools
+
+```vim
+:MasonUpdate    " Update all installed packages
+```
+
+### Checking Installation Status
+
+```vim
+:Mason          " Visual UI showing status
+:MasonLog       " View detailed installation logs
+```
+
+## Integration with Other Plugins
+
+### LSP Configuration
+
+Mason works with nvim-lspconfig:
+
+```plaintext
+1. Mason installs the LSP server binary
+2. nvim-lspconfig configures the server
+3. LSP features become available automatically
+```
+
+### Formatter Configuration
+
+Formatters installed by Mason are used by formatter plugins:
+
+```plaintext
+1. Mason installs prettier/stylua/black
+2. Formatting plugin detects installed tools
+3. Format on save works automatically
+```
+
+## Troubleshooting
+
+### Server Not Starting
+
+If an LSP server isn't working:
+
+```vim
+:LspInfo        " Check server status
+:Mason          " Verify installation (should show ✓)
+:MasonLog       " Check for errors
+```
+
+### Reinstalling a Package
+
+<Note>
+If a tool is broken, uninstall and reinstall it through Mason.
+</Note>
+
+```plaintext
+1. Run :Mason
+2. Navigate to the package
+3. Press 'X' to uninstall
+4. Press 'i' to reinstall
+```
+
+### Path Issues
+
+Mason installs tools to:
+```plaintext
+~/.local/share/nvim/mason/bin/
+```
+
+This path is automatically added to Neovim's PATH.
+
+## Related Plugins
+
+- [Treesitter](/plugins-reference/treesitter) - Syntax highlighting
+- [Trouble](/plugins-reference/trouble) - Diagnostic display

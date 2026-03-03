@@ -1,0 +1,347 @@
+---
+title: Snacks
+description: Collection of small UI enhancements and utilities
+---
+
+Snacks is a modern plugin by Folke that provides a collection of small, useful UI enhancements and utilities. nvim-luffy uses it primarily for smooth scrolling animations.
+
+## Purpose
+
+Snacks adds polish to the nvim-luffy experience:
+
+- Smooth animated scrolling
+- Enhanced visual feedback
+- Lightweight and modular
+- Multiple utilities in one plugin
+
+<Note>
+Snacks is part of Folke's ecosystem (same author as Flash, Trouble, and other popular plugins). It provides small enhancements that make Neovim feel more modern.
+</Note>
+
+## Configuration
+
+<Accordion title="View Full Configuration">
+```lua ~/workspace/source/lua/leyland/plugins/snacks.lua
+return {
+	"folke/snacks.nvim",
+	priority = 1000,
+	lazy = false,
+	opts = {
+		scroll = {
+			enabled = true,
+			animate = {
+				duration = { step = 10, total = 100 },
+				easing = "linear",
+			},
+		},
+	},
+}
+```
+</Accordion>
+
+## Enabled Features
+
+### Smooth Scrolling
+
+The primary feature enabled in nvim-luffy:
+
+```lua
+scroll = {
+  enabled = true,
+  animate = {
+    duration = { step = 10, total = 100 },
+    easing = "linear",
+  },
+}
+```
+
+This provides smooth animated scrolling when using:
+- `Ctrl+d` / `Ctrl+u` (half-page scroll)
+- `Ctrl+f` / `Ctrl+b` (full-page scroll)
+- `gg` / `G` (top/bottom)
+- `zz` / `zt` / `zb` (center/top/bottom)
+
+## Key Settings
+
+### Priority Loading
+
+```lua
+priority = 1000
+lazy = false
+```
+
+Snacks loads early and synchronously to ensure smooth scrolling is available immediately.
+
+### Animation Duration
+
+- **step: 10ms** - Duration of each animation frame
+- **total: 100ms** - Total scroll animation duration
+
+<Tip>
+The 100ms total duration provides smooth scrolling that feels responsive without being too slow.
+</Tip>
+
+### Easing Function
+
+```lua
+easing = "linear"
+```
+
+Linear easing provides consistent scroll speed throughout the animation. Other options include:
+- `quadratic` - Slow start, fast end
+- `cubic` - More pronounced acceleration
+
+## Scrolling Experience
+
+### Half-Page Scrolling
+
+With Snacks enabled:
+
+```plaintext
+Without Snacks:
+- Press Ctrl+d
+- Screen jumps immediately
+- Can be disorienting
+
+With Snacks:
+- Press Ctrl+d
+- Screen smoothly animates
+- Easier to track your position
+- Feels more natural
+```
+
+### Navigation Commands
+
+All these commands are enhanced with smooth scrolling:
+
+| Command | Action | Smooth Scroll |
+|---------|--------|---------------|
+| `Ctrl+d` | Half page down | ✓ |
+| `Ctrl+u` | Half page up | ✓ |
+| `Ctrl+f` | Full page down | ✓ |
+| `Ctrl+b` | Full page up | ✓ |
+| `gg` | Go to top | ✓ |
+| `G` | Go to bottom | ✓ |
+| `zz` | Center cursor | ✓ |
+| `zt` | Cursor to top | ✓ |
+| `zb` | Cursor to bottom | ✓ |
+| `{` / `}` | Paragraph jump | ✓ |
+
+## Usage Examples
+
+### Reading Code
+
+<Note>
+Smooth scrolling makes it easier to read through large files without losing your place.
+</Note>
+
+```plaintext
+Reading through a file:
+1. Press Ctrl+d to scroll down
+2. Smooth animation helps you track position
+3. Your eyes follow the scroll naturally
+4. Less mental effort to reorient
+```
+
+### Navigating Sections
+
+```plaintext
+Jumping between sections:
+1. Press } to jump to next paragraph
+2. Smooth scroll shows the transition
+3. You see what code was skipped
+4. Better spatial awareness in file
+```
+
+### Centering Code
+
+```plaintext
+Centering your work:
+1. Navigate to a function
+2. Press 'zz' to center it
+3. Smooth animation brings line to center
+4. Less jarring than instant jump
+```
+
+## Performance Impact
+
+Snacks is designed to be lightweight:
+
+- Minimal CPU usage (animations use efficient rendering)
+- No lag or stuttering
+- Disables automatically if performance drops
+- No impact on Neovim startup time
+
+<Tip>
+The 100ms animation duration is optimized for modern hardware. On older machines, it still performs well.
+</Tip>
+
+## Customization
+
+### Adjust Animation Speed
+
+<Accordion title="Faster/Slower Scrolling">
+```lua
+-- Edit lua/leyland/plugins/snacks.lua
+
+-- Faster (50ms total)
+animate = {
+  duration = { step = 5, total = 50 },
+  easing = "linear",
+}
+
+-- Slower (200ms total)
+animate = {
+  duration = { step = 10, total = 200 },
+  easing = "linear",
+}
+```
+</Accordion>
+
+### Change Easing
+
+<Accordion title="Different Animation Feel">
+```lua
+-- Quadratic easing (accelerates at end)
+easing = "quadratic"
+
+-- Cubic easing (more dramatic acceleration)
+easing = "cubic"
+
+-- Linear easing (constant speed)
+easing = "linear"
+```
+</Accordion>
+
+### Disable Smooth Scrolling
+
+<Accordion title="Turn Off Smooth Scroll">
+```lua
+-- Option 1: Disable in config
+opts = {
+  scroll = {
+    enabled = false,
+  },
+}
+
+-- Option 2: Runtime disable
+:lua require('snacks').scroll.disable()
+
+-- Option 3: Comment out entire plugin
+-- Comment the snacks.lua file in plugins/
+```
+</Accordion>
+
+## Additional Snacks Features
+
+While nvim-luffy only enables smooth scrolling, Snacks provides other utilities:
+
+<Accordion title="Other Available Features">
+```lua
+-- Dashboard (alternative to alpha)
+dashboard = { enabled = true }
+
+-- Notification system
+notify = { enabled = true }
+
+-- Status line components
+statusline = { enabled = true }
+
+-- Git signs
+gitsigns = { enabled = true }
+
+-- Indent guides
+indent = { enabled = true }
+```
+
+These can be enabled if desired, but nvim-luffy uses specialized plugins for most of these features.
+</Accordion>
+
+## Integration with Other Plugins
+
+### Works Well With
+
+- **Flash** - Smooth scroll after flash jumps
+- **Telescope** - Preview window scrolling
+- **nvim-tree** - Smooth scrolling in file explorer
+- **Trouble** - Smooth scrolling through diagnostics
+
+### Does Not Conflict With
+
+Snacks' smooth scrolling doesn't interfere with:
+- Mouse scrolling
+- Trackpad gestures
+- Relative line numbers
+- Line wrapping
+- Split windows
+
+## Accessibility
+
+### Motion Sensitivity
+
+<Note>
+If animations cause discomfort, you can disable smooth scrolling while keeping other Snacks features.
+</Note>
+
+```lua
+-- For users sensitive to motion:
+opts = {
+  scroll = { enabled = false }
+}
+```
+
+### Alternative: Instant Scroll
+
+Disabling Snacks returns to Vim's default instant scrolling, which some users prefer for:
+- Reduced motion
+- Lower latency feel
+- Less visual distraction
+
+## Troubleshooting
+
+### Scrolling Feels Laggy
+
+If animations stutter:
+
+```lua
+-- Reduce animation duration
+animate = {
+  duration = { step = 5, total = 50 },
+}
+```
+
+### Scrolling Too Slow
+
+```lua
+-- Speed up animations
+animate = {
+  duration = { step = 5, total = 50 },
+}
+```
+
+### Want Instant Scrolling Back
+
+```vim
+" Disable at runtime:
+:lua require('snacks').scroll.disable()
+
+" Or disable in config
+```
+
+## Design Philosophy
+
+<Note>
+Snacks embodies the "micro-interaction" design principle: small details that make the user experience more pleasant without being intrusive.
+</Note>
+
+Smooth scrolling:
+- Reduces cognitive load
+- Helps maintain spatial awareness
+- Makes navigation feel more natural
+- Adds polish without affecting functionality
+
+## Related Plugins
+
+- [Flash](/plugins-reference/flash) - Navigation that benefits from smooth scrolling
+- [Telescope](/plugins-reference/telescope) - Preview scrolling enhanced
+- [Alpha](/plugins-reference/alpha) - Another UI enhancement plugin

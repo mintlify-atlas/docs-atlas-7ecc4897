@@ -1,0 +1,345 @@
+---
+title: Neogit
+description: Git interface for Neovim inspired by Magit
+---
+
+Neogit is a Git interface for Neovim that brings the power of Magit (Emacs) to Vim. It provides an intuitive, keyboard-driven interface for all your Git operations without leaving your editor.
+
+## Purpose
+
+Neogit serves as the primary Git interface in nvim-luffy:
+
+- Visual staging interface for reviewing changes
+- Commit, push, pull, and branch operations
+- Interactive rebase and merge conflict resolution
+- Diff integration with diffview.nvim
+- Floating window UI that doesn't disrupt your workflow
+
+<Note>
+Neogit is designed for developers who prefer keyboard-driven workflows over CLI git commands or GUI clients.
+</Note>
+
+## Configuration
+
+<Accordion title="View Full Configuration">
+```lua ~/workspace/source/lua/leyland/plugins/neogit.lua
+return {
+	"NeogitOrg/neogit",
+	lazy = true,
+	dependencies = {
+		"nvim-lua/plenary.nvim", -- required
+		"sindrets/diffview.nvim", -- optional - Diff integration
+		"nvim-telescope/telescope.nvim", -- optional
+		"ibhagwan/fzf-lua", -- optional
+		"nvim-mini/mini.pick", -- optional
+		"folke/snacks.nvim", -- optional
+	},
+	cmd = "Neogit",
+	keys = {
+		{
+			"<leader>gg",
+			function()
+				require("neogit").open({ kind = "floating" })
+			end,
+			desc = "Neogit (floating)",
+		},
+	},
+}
+```
+</Accordion>
+
+## Key Features
+
+### Floating Window Interface
+
+nvim-luffy configures Neogit to open in a floating window:
+
+```lua
+open({ kind = "floating" })
+```
+
+This provides a centered, focused Git interface that overlays your work without changing your window layout.
+
+### Lazy Loading
+
+- **cmd: "Neogit"** - Only loads when needed
+- **lazy: true** - Not loaded on startup
+- Loads on first use via `<leader>gg`
+
+### Optional Integrations
+
+Neogit integrates with:
+- **diffview.nvim** - Enhanced diff viewing
+- **telescope.nvim** - Fuzzy finding within git operations
+- **plenary.nvim** - Required dependency
+
+## Keybindings
+
+### Opening Neogit
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `<leader>gg` | Normal | Open Neogit | Opens Neogit in floating window |
+
+<Tip>
+The mnemonic is easy: `gg` = "git gui". Two taps and you're in the Git interface.
+</Tip>
+
+### Neogit Buffer Mappings
+
+Once Neogit is open, these keys control the interface:
+
+#### Navigation
+| Key | Action |
+|-----|--------|
+| `j`/`k` | Move up/down |
+| `<Tab>` | Toggle section collapse/expand |
+| `<CR>` | Go to file/show commit |
+
+#### Staging
+| Key | Action |
+|-----|--------|
+| `s` | Stage file/hunk under cursor |
+| `S` | Stage all unstaged changes |
+| `u` | Unstage file/hunk under cursor |
+| `U` | Unstage all staged changes |
+| `=` | Show diff for item under cursor |
+
+#### Commits
+| Key | Action |
+|-----|--------|
+| `c` | Open commit menu |
+| `cc` | Create commit |
+| `ca` | Amend last commit |
+| `ce` | Extend last commit (no edit) |
+
+#### Branching
+| Key | Action |
+|-----|--------|
+| `b` | Open branch menu |
+| `bb` | Checkout branch |
+| `bc` | Create new branch |
+
+#### Remote Operations
+| Key | Action |
+|-----|--------|
+| `p` | Open push menu |
+| `pp` | Push to remote |
+| `P` | Open pull menu |
+| `F` | Open fetch menu |
+
+#### Other Operations
+| Key | Action |
+|-----|--------|
+| `r` | Rebase menu |
+| `m` | Merge menu |
+| `l` | Log menu |
+| `z` | Stash menu |
+| `?` | Show help |
+| `q` | Close Neogit |
+
+## Usage Examples
+
+### Basic Commit Workflow
+
+```plaintext
+1. Press <leader>gg to open Neogit
+2. Review unstaged changes
+3. Press 's' on files to stage them
+4. Press 'cc' to create a commit
+5. Write commit message
+6. Save and close commit buffer
+7. Press 'q' to close Neogit
+```
+
+### Staging Partial Changes
+
+<Tip>
+You can stage individual hunks (chunks) of changes rather than entire files.
+</Tip>
+
+```plaintext
+1. Press <leader>gg
+2. Navigate to a file with changes
+3. Press <Tab> to expand and see hunks
+4. Move cursor to specific hunk
+5. Press 's' to stage just that hunk
+6. Repeat for other hunks
+7. Press 'cc' to commit staged hunks
+```
+
+### Reviewing Changes
+
+```plaintext
+View what changed:
+1. Open Neogit with <leader>gg
+2. Navigate to a file
+3. Press '=' to see full diff
+4. Review the changes
+5. Press 'q' to close diff
+```
+
+### Branch Management
+
+<Note>
+Neogit provides a full-featured branch interface without memorizing git commands.
+</Note>
+
+```plaintext
+Create and switch to new branch:
+1. Press <leader>gg
+2. Press 'b' (branch menu)
+3. Press 'c' (create branch)
+4. Type branch name
+5. Press Enter
+
+Switch branches:
+1. Press <leader>gg
+2. Press 'b' then 'b' (checkout)
+3. Select branch from list
+4. Press Enter
+```
+
+### Pushing Changes
+
+```plaintext
+Push to remote:
+1. Commit your changes (cc)
+2. Press 'p' (push menu)
+3. Press 'p' (push to remote)
+4. Confirm if prompted
+
+Force push (careful!):
+1. Press 'p' (push menu)
+2. Press '-f' to add force flag
+3. Press 'p' (push)
+```
+
+### Amending Commits
+
+<Tip>
+Quickly fix your last commit without creating a new one.
+</Tip>
+
+```plaintext
+1. Make additional changes
+2. Press <leader>gg
+3. Stage the changes with 's'
+4. Press 'ca' (commit amend)
+5. Edit message or just save
+```
+
+### Interactive Rebase
+
+```plaintext
+1. Press <leader>gg
+2. Press 'l' to view log
+3. Press 'r' for rebase menu
+4. Press 'i' for interactive rebase
+5. Select the base commit
+6. Edit rebase todo list
+7. Save and let it run
+```
+
+### Stashing Changes
+
+```plaintext
+Stash your work:
+1. Press <leader>gg
+2. Press 'z' (stash menu)
+3. Press 'z' (create stash)
+4. Enter stash message
+
+Pop stash:
+1. Press <leader>gg
+2. Press 'z' (stash menu)
+3. Press 'p' (pop)
+```
+
+## Advanced Features
+
+### Diffview Integration
+
+With diffview.nvim installed, Neogit provides enhanced diff viewing:
+
+```plaintext
+1. Navigate to a commit
+2. Press '=' to open diff
+3. diffview opens with side-by-side comparison
+4. Navigate between files
+5. Press 'q' to close
+```
+
+### Telescope Integration
+
+Find commits, branches, or files using Telescope:
+
+```plaintext
+In Neogit branch menu:
+- Type to fuzzy search branches
+- Uses Telescope if available
+```
+
+## Workflow Tips
+
+### Quick Commit
+
+<Tip>
+For rapid commits: `<leader>gg` → `S` (stage all) → `cc` (commit) → write message → save → `q`
+</Tip>
+
+### Review Before Push
+
+```plaintext
+Always review before pushing:
+1. <leader>gg
+2. Press 'l' to see log
+3. Review recent commits
+4. Press 'p' then 'p' to push
+```
+
+### Feature Branch Workflow
+
+```plaintext
+1. <leader>gg → 'b' → 'c' (create feature branch)
+2. Make changes, commit with 'cc'
+3. 'p' → 'p' (push branch)
+4. Create PR via web
+5. 'b' → 'b' (switch back to main)
+```
+
+## Troubleshooting
+
+### Neogit Won't Open
+
+If `<leader>gg` doesn't work:
+
+```vim
+:Neogit     " Try opening directly
+```
+
+### Merge Conflicts
+
+Neogit highlights merge conflicts:
+
+```plaintext
+1. Files with conflicts marked in Neogit
+2. Press Enter on conflicted file
+3. Resolve conflicts in editor
+4. Stage resolved file with 's'
+5. Press 'cc' to complete merge commit
+```
+
+### Floating Window Too Small
+
+The floating window size is fixed. If you prefer a different layout:
+
+```lua
+-- Change "floating" to "split" or "tab"
+require("neogit").open({ kind = "split" })
+```
+
+## Related Plugins
+
+- [Telescope](/plugins-reference/telescope) - Find git files and commits
+- [Trouble](/plugins-reference/trouble) - View git-related diagnostics

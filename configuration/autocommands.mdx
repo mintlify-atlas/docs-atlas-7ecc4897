@@ -1,0 +1,274 @@
+---
+title: Autocommands
+description: Automatic behaviors and event handlers in nvim-luffy
+---
+
+## Overview
+
+Autocommands automatically execute actions in response to specific events. nvim-luffy uses autocommands to enhance the editing experience with smart behaviors that activate at the right time.
+
+All autocommands are defined in `lua/leyland/core/autocommands.lua`.
+
+## Autocommand Groups
+
+Autocommands are organized into groups for better management:
+
+```lua
+local function augroup(name)
+  return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
+end
+```
+
+This helper function creates named autocommand groups with the `lazyvim_` prefix. The `clear = true` option ensures that autocommands are not duplicated when the configuration is reloaded.
+
+## Highlight on Yank
+
+### Purpose
+
+Briefly highlights text when you yank (copy) it, providing visual feedback that the operation succeeded.
+
+### Implementation
+
+```lua
+vim.api.nvim_create_autocmd("TextYankPost", {
+  group = augroup("highlight_yank"),
+  callback = function()
+    (vim.hl or vim.highlight).on_yank()
+  end,
+})
+```
+
+### Details
+
+<AccordionGroup>
+  <Accordion title="Event: TextYankPost">
+    Triggers immediately after text is yanked (copied) using commands like:
+    - `y` - Yank
+    - `yy` - Yank line
+    - `yap` - Yank paragraph
+    - Any other yank operation
+  </Accordion>
+  
+  <Accordion title="Group: lazyvim_highlight_yank">
+    The autocommand is placed in the `lazyvim_highlight_yank` group for organization and to allow clearing/disabling if needed.
+  </Accordion>
+  
+  <Accordion title="Callback Function">
+    Calls `vim.highlight.on_yank()` which:
+    - Highlights the yanked region
+    - Uses a brief flash animation (default 150ms)
+    - Works with both `vim.hl` and `vim.highlight` for compatibility
+  </Accordion>
+</AccordionGroup>
+
+### Visual Example
+
+<Steps>
+  <Step title="Before Yank">
+    Your cursor is on a line of code:
+    ```lua
+    local value = 42
+    ```
+  </Step>
+  
+  <Step title="Execute Yank">
+    You press `yy` to yank the entire line.
+  </Step>
+  
+  <Step title="Highlight Flash">
+    The line briefly highlights (typically in a different background color) to confirm the yank succeeded.
+    ```lua
+    local value = 42  [HIGHLIGHTED]
+    ```
+  </Step>
+  
+  <Step title="Return to Normal">
+    The highlight fades and you can continue editing or paste the yanked text.
+  </Step>
+</Steps>
+
+<Tip>This feature is especially helpful when yanking in visual mode or when yanking multiple lines, as it clearly shows what was copied.</Tip>
+
+## Auto-Clear Search Highlights
+
+### Purpose
+
+Automatically removes search highlights when they become irrelevant, keeping the interface clean without requiring manual clearing.
+
+### Implementation
+
+```lua
+vim.api.nvim_create_autocmd("CursorMoved", {
+  group = vim.api.nvim_create_augroup("auto-hlsearch", { clear = true }),
+  callback = function()
+    if vim.v.hlsearch == 1 and vim.fn.searchcount().exact_match == 0 then
+      vim.schedule(function()
+        vim.cmd.nohlsearch()
+      end)
+    end
+  end,
+})
+```
+
+### Details
+
+<AccordionGroup>
+  <Accordion title="Event: CursorMoved">
+    Triggers every time the cursor moves in normal mode. This provides continuous monitoring of cursor position relative to search matches.
+  </Accordion>
+  
+  <Accordion title="Group: auto-hlsearch">
+    Uses an inline group definition for this specific autocommand. The group is cleared on each reload to prevent duplication.
+  </Accordion>
+  
+  <Accordion title="Condition: vim.v.hlsearch == 1">
+    Checks if search highlighting is currently active. `vim.v.hlsearch` is a Vim variable that tracks the highlight state:
+    - `1` = Search highlighting is on
+    - `0` = Search highlighting is off
+  </Accordion>
+  
+  <Accordion title="Condition: exact_match == 0">
+    Uses `vim.fn.searchcount().exact_match` to check if the cursor is on a search match:
+    - `0` = Cursor is NOT on a match
+    - `1` = Cursor IS on a match
+    
+    This prevents clearing highlights while you're still on a match.
+  </Accordion>
+  
+  <Accordion title="Action: vim.schedule">
+    Wraps the `nohlsearch` command in `vim.schedule()` to defer execution. This prevents potential issues with modifying state during an event callback.
+  </Accordion>
+</AccordionGroup>
+
+### Behavior Example
+
+<Steps>
+  <Step title="Perform Search">
+    You search for a word:
+    ```
+    /function
+    ```
+    All instances of "function" are highlighted.
+  </Step>
+  
+  <Step title="Navigate to Match">
+    You press `n` to jump to a match. The highlights remain because you're on a match.
+  </Step>
+  
+  <Step title="Move Away">
+    You move the cursor away from any matches using `j`, `k`, or any motion.
+  </Step>
+  
+  <Step title="Auto-Clear">
+    The highlights automatically disappear because:
+    - Search highlighting was active (`hlsearch == 1`)
+    - Cursor is not on a match (`exact_match == 0`)
+  </Step>
+</Steps>
+
+### Benefits
+
+<CardGroup cols={2}>
+  <Card title="Clean Interface" icon="sparkles">
+    No lingering search highlights cluttering your view after you're done searching.
+  </Card>
+  
+  <Card title="No Manual Clearing" icon="wand-magic-sparkles">
+    You don't need to manually run `:noh` or press a keymap to clear highlights.
+  </Card>
+  
+  <Card title="Smart Behavior" icon="brain">
+    Keeps highlights visible while you're on a match, only clearing when you move away.
+  </Card>
+  
+  <Card title="Seamless Experience" icon="hand-sparkles">
+    Works automatically in the background without any conscious effort.
+  </Card>
+</CardGroup>
+
+<Note>This autocommand replaces the need for the commented-out keymap `<leader>nh` that would manually clear search highlights.</Note>
+
+## Performance Considerations
+
+### CursorMoved Event Frequency
+
+The `CursorMoved` event fires on every cursor movement, which could potentially impact performance. However, nvim-luffy's implementation is optimized:
+
+<Steps>
+  <Step title="Quick Checks">
+    The callback performs fast conditional checks (`vim.v.hlsearch` and `searchcount()`) that exit early if no action is needed.
+  </Step>
+  
+  <Step title="Deferred Execution">
+    Uses `vim.schedule()` to defer the actual highlight clearing, preventing blocking behavior.
+  </Step>
+  
+  <Step title="Minimal Impact">
+    The autocommand only executes significant work when both conditions are met (highlighting on + not on match), which is infrequent.
+  </Step>
+</Steps>
+
+## Summary Table
+
+| Autocommand | Event | Group | Purpose |
+|-------------|-------|-------|----------|
+| **Highlight on Yank** | `TextYankPost` | `lazyvim_highlight_yank` | Briefly highlight yanked text for visual feedback |
+| **Auto-Clear Search** | `CursorMoved` | `auto-hlsearch` | Automatically remove search highlights when cursor moves away from matches |
+
+## Customization
+
+You can modify these autocommands in `lua/leyland/core/autocommands.lua`:
+
+<Tabs>
+  <Tab title="Disable Highlight on Yank">
+    Comment out or remove the `TextYankPost` autocommand:
+    ```lua
+    -- vim.api.nvim_create_autocmd("TextYankPost", {
+    --   group = augroup("highlight_yank"),
+    --   callback = function()
+    --     (vim.hl or vim.highlight).on_yank()
+    --   end,
+    -- })
+    ```
+  </Tab>
+  
+  <Tab title="Disable Auto-Clear Search">
+    Comment out or remove the `CursorMoved` autocommand:
+    ```lua
+    -- vim.api.nvim_create_autocmd("CursorMoved", {
+    --   group = vim.api.nvim_create_augroup("auto-hlsearch", { clear = true }),
+    --   callback = function()
+    --     if vim.v.hlsearch == 1 and vim.fn.searchcount().exact_match == 0 then
+    --       vim.schedule(function()
+    --         vim.cmd.nohlsearch()
+    --       end)
+    --     end
+    --   end,
+    -- })
+    ```
+  </Tab>
+  
+  <Tab title="Change Yank Highlight Duration">
+    Pass options to `on_yank()` to customize duration:
+    ```lua
+    vim.api.nvim_create_autocmd("TextYankPost", {
+      group = augroup("highlight_yank"),
+      callback = function()
+        vim.highlight.on_yank({ timeout = 300 })  -- 300ms instead of default 150ms
+      end,
+    })
+    ```
+  </Tab>
+</Tabs>
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card title="Keymaps" icon="keyboard" href="/configuration/keymaps">
+    Learn about keybindings, including the disabled `<leader>nh` that these autocommands replace
+  </Card>
+  
+  <Card title="Options" icon="sliders" href="/configuration/options">
+    Understand editor options that work together with these autocommands
+  </Card>
+</CardGroup>

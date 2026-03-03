@@ -1,0 +1,98 @@
+---
+title: Introduction
+description: A modern, feature-rich Neovim configuration built for productivity
+---
+
+# Welcome to nvim-luffy
+
+**Maybe the one piece was the commits we made along the way**
+
+nvim-luffy is a carefully crafted Neovim configuration that transforms your editor into a powerful IDE-like environment. Built with modern tools and best practices, it provides an exceptional development experience out of the box.
+
+## Why nvim-luffy?
+
+nvim-luffy combines the best plugins and configurations from the Neovim ecosystem into a cohesive, well-integrated setup. Whether you're writing TypeScript, Python, Lua, or any other language, you'll have LSP support, intelligent completions, and powerful navigation tools at your fingertips.
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/installation">
+    Get nvim-luffy up and running in minutes
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Learn the essential keybindings and workflows
+  </Card>
+  <Card title="Configuration" icon="gear" href="/configuration">
+    Customize nvim-luffy to match your preferences
+  </Card>
+  <Card title="Features" icon="stars" href="/features">
+    Explore all the powerful features included
+  </Card>
+</CardGroup>
+
+## Key Features
+
+### Language Server Protocol (LSP)
+Full LSP support powered by Mason and nvim-lspconfig with automatic installation of language servers:
+- TypeScript/JavaScript (ts_ls, eslint)
+- HTML, CSS, Tailwind CSS
+- Python (pyright, pylint)
+- Lua (lua_ls)
+- GraphQL, Svelte, Prisma
+- Emmet for HTML/CSS expansion
+
+### Intelligent Code Completion
+Context-aware completions with nvim-cmp featuring:
+- LSP-based suggestions
+- Snippet expansion with LuaSnip
+- Buffer and path completions
+- VS Code-style pictograms
+- Smart Tab navigation
+
+### Fuzzy Finding with Telescope
+Blazingly fast file and text search:
+- Find files instantly with `<Space><Space>`
+- Search across your entire project with `<Space>/`
+- Recent files, keymaps, and TODO comments
+- Native FZF integration for optimal performance
+
+### Syntax Highlighting
+Treesitter-powered syntax highlighting and code understanding for 25+ languages including JavaScript, TypeScript, Python, Lua, HTML, CSS, Markdown, and more.
+
+### Git Integration
+Seamless Git workflow with:
+- **Neogit**: Magit-inspired Git interface (`<Space>gg`)
+- **Diffview**: Beautiful diff and merge conflict resolution
+- **Gitsigns**: Inline git blame and hunk navigation
+
+### File Navigation
+Multiple approaches to navigate your codebase:
+- **nvim-tree**: Feature-rich file explorer (`<Space>e`)
+- **Harpoon 2**: Lightning-fast file switching with marks
+- **Flash**: Jump to any visible location with ease
+
+### Code Formatting
+Automatic code formatting with prettier, stylua, black, and isort. Keep your code clean and consistent across your entire team.
+
+### Smart Editor Features
+- Auto-pairs for brackets and quotes
+- Trouble for elegant diagnostics list
+- Tmux integration for seamless terminal navigation
+- Custom winbar showing file path and position
+- Relative line numbers for efficient movement
+
+## Philosophy
+
+nvim-luffy is designed with these principles:
+
+1. **Productivity First**: Every keybinding and plugin is chosen to maximize your efficiency
+2. **Modern Tools**: Use the latest and most maintained plugins from the ecosystem
+3. **Sensible Defaults**: Works great out of the box, but easily customizable
+4. **Performance**: Lazy loading and optimized configuration for instant startup
+5. **Beautiful**: Multiple colorschemes (Bamboo, Catppuccin, Tokyo Night, Rose Pine, and more)
+
+## Getting Started
+
+Ready to set sail? Head over to the [Installation](/installation) guide to get started, or jump straight into the [Quickstart](/quickstart) to see what nvim-luffy can do.
+
+<Note>
+  nvim-luffy requires Neovim 0.9+ and works best with a terminal that supports true colors and Nerd Fonts.
+</Note>

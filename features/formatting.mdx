@@ -1,0 +1,273 @@
+---
+title: 'Code Formatting'
+description: 'Automatic code formatting with conform.nvim'
+---
+
+## Overview
+
+nvim-luffy uses conform.nvim for code formatting, providing automatic format-on-save and manual formatting capabilities across multiple languages.
+
+## Features
+
+- **Format on save** - Automatically format files when saving
+- **Multiple formatters** - Different formatters per language
+- **LSP fallback** - Use LSP formatting when no formatter is configured
+- **Manual formatting** - Format on demand with a keybinding
+- **Range formatting** - Format only selected text in visual mode
+
+## Configuration
+
+<Code>
+```lua
+conform.setup({
+  formatters_by_ft = {
+    -- Formatters configured by file type
+  },
+  format_on_save = {
+    lsp_fallback = true,
+    async = false,
+    timeout_ms = 3000,
+  },
+})
+```
+</Code>
+
+## Formatters by Language
+
+Conform is configured with specific formatters for each file type:
+
+### JavaScript/TypeScript
+
+<ParamField path="javascript" type="Formatter">
+  prettier
+</ParamField>
+
+<ParamField path="typescript" type="Formatter">
+  prettier
+</ParamField>
+
+<ParamField path="javascriptreact" type="Formatter">
+  prettier
+</ParamField>
+
+<ParamField path="typescriptreact" type="Formatter">
+  prettier
+</ParamField>
+
+### Web Technologies
+
+<ParamField path="html" type="Formatter">
+  prettier
+</ParamField>
+
+<ParamField path="css" type="Formatter">
+  prettier
+</ParamField>
+
+<ParamField path="svelte" type="Formatter">
+  prettier
+</ParamField>
+
+### Data Formats
+
+<ParamField path="json" type="Formatter">
+  prettier
+</ParamField>
+
+<ParamField path="yaml" type="Formatter">
+  prettier
+</ParamField>
+
+<ParamField path="markdown" type="Formatter">
+  prettier
+</ParamField>
+
+<ParamField path="graphql" type="Formatter">
+  prettier
+</ParamField>
+
+<ParamField path="liquid" type="Formatter">
+  prettier
+</ParamField>
+
+### Lua
+
+<ParamField path="lua" type="Formatter">
+  stylua
+</ParamField>
+
+### Python
+
+<ParamField path="python" type="Formatter">
+  isort, black (runs in sequence)
+</ParamField>
+
+<Code>
+```lua
+formatters_by_ft = {
+  javascript = { "prettier" },
+  typescript = { "prettier" },
+  javascriptreact = { "prettier" },
+  typescriptreact = { "prettier" },
+  svelte = { "prettier" },
+  css = { "prettier" },
+  html = { "prettier" },
+  json = { "prettier" },
+  yaml = { "prettier" },
+  markdown = { "prettier" },
+  graphql = { "prettier" },
+  liquid = { "prettier" },
+  lua = { "stylua" },
+  python = { "isort", "black" },
+}
+```
+</Code>
+
+<Note>
+For Python, `isort` runs first to organize imports, then `black` formats the code.
+</Note>
+
+## Format on Save
+
+Files are automatically formatted when saved:
+
+<Code>
+```lua
+format_on_save = {
+  lsp_fallback = true,
+  async = false,
+  timeout_ms = 3000,
+}
+```
+</Code>
+
+### Settings
+
+<ParamField path="lsp_fallback" type="boolean" default="true">
+  Use LSP formatting if no conform formatter is configured
+</ParamField>
+
+<ParamField path="async" type="boolean" default="false">
+  Format synchronously to ensure completion before save
+</ParamField>
+
+<ParamField path="timeout_ms" type="number" default="3000">
+  Maximum time to wait for formatting (3 seconds)
+</ParamField>
+
+<Tip>
+Format-on-save is synchronous to ensure your file is properly formatted before it's written to disk.
+</Tip>
+
+## Manual Formatting
+
+You can manually trigger formatting with a keybinding:
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `<leader>mp` | Normal | Format file | Format the entire file |
+| `<leader>mp` | Visual | Format range | Format only selected text |
+
+<Code>
+```lua
+vim.keymap.set({ "n", "v" }, "<leader>mp", function()
+  conform.format({
+    lsp_fallback = true,
+    async = false,
+    timeout_ms = 1000,
+  })
+end, { desc = "Format file or range (in visual mode)" })
+```
+</Code>
+
+### Usage
+
+#### Format Entire File
+
+1. In normal mode, press `<leader>mp`
+2. File is formatted immediately
+
+#### Format Selection
+
+1. Enter visual mode with `v` or `V`
+2. Select the code you want to format
+3. Press `<leader>mp`
+4. Only the selection is formatted
+
+<Tip>
+Manual formatting uses a shorter timeout (1 second) for quicker feedback.
+</Tip>
+
+## LSP Fallback
+
+If no formatter is configured for a file type, conform will fall back to LSP formatting:
+
+<Code>
+```lua
+lsp_fallback = true
+```
+</Code>
+
+This ensures all files with LSP support can still be formatted, even without a dedicated formatter.
+
+## Formatter Installation
+
+All formatters are automatically installed via Mason:
+
+<Code>
+```lua
+-- From mason.lua
+ensure_installed = {
+  "prettier",
+  "stylua",
+  "isort",
+  "black",
+}
+```
+</Code>
+
+<Note>
+Formatters are installed automatically on first launch. You don't need to install them manually.
+</Note>
+
+## Disabling Format on Save
+
+If you want to disable automatic formatting for a specific buffer:
+
+<Code>
+```vim
+:lua vim.b.disable_autoformat = true
+```
+</Code>
+
+To disable globally:
+
+<Code>
+```vim
+:lua vim.g.disable_autoformat = true
+```
+</Code>
+
+## Adding Custom Formatters
+
+To add a formatter for a new file type, edit the configuration:
+
+<Code>
+```lua
+formatters_by_ft = {
+  -- Add your custom formatter
+  rust = { "rustfmt" },
+  go = { "gofmt" },
+}
+```
+</Code>
+
+Then ensure the formatter is installed via Mason.
+
+<Tip>
+Use `:ConformInfo` to see which formatters are available and configured for the current buffer.
+</Tip>
+
+<Note>
+Source: `lua/leyland/plugins/formatting.lua:7-29`
+</Note>

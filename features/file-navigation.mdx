@@ -1,0 +1,181 @@
+---
+title: 'File Navigation'
+description: 'Efficient file navigation with nvim-tree and harpoon'
+---
+
+## Overview
+
+nvim-luffy provides two complementary file navigation tools: nvim-tree for traditional file exploration and harpoon for quick access to frequently used files.
+
+## nvim-tree
+
+A file explorer tree for browsing and managing project files.
+
+### Key Features
+
+- Right-side file tree with 50-character width
+- Relative line numbers
+- Indent markers for better hierarchy visualization
+- Git integration (shows git status for files)
+- Custom folder icons
+
+### Configuration
+
+<Code>
+```lua
+nvimtree.setup({
+  view = {
+    width = 50,
+    relativenumber = true,
+    side = "right",
+  },
+  renderer = {
+    indent_markers = {
+      enable = true,
+    },
+  },
+  git = {
+    ignore = false,
+  },
+})
+```
+</Code>
+
+### Keybindings
+
+#### Global
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<leader>e` | Toggle explorer | Open/close file explorer at current file |
+
+<Code>
+```lua
+keys = {
+  { "<leader>e", "<cmd>NvimTreeFindFileToggle<cr>", desc = "Toggle file explorer" },
+}
+```
+</Code>
+
+#### Inside nvim-tree
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `l` | Open | Open file or expand directory |
+| `h` | Close | Close directory or navigate to parent |
+
+<Code>
+```lua
+vim.keymap.set("n", "l", api.node.open.edit, opts("Open"))
+vim.keymap.set("n", "h", api.node.navigate.parent_close, opts("Close Directory"))
+```
+</Code>
+
+<Tip>
+The file tree automatically locates and highlights the current file when toggled with `<leader>e`.
+</Tip>
+
+### Additional Features
+
+- **Filtering**: `.DS_Store` files are automatically hidden
+- **Window picker**: Disabled for simpler behavior
+- **Git integration**: Files ignored by git are still shown
+
+## Harpoon
+
+Quick file navigation system for marking and jumping to frequently used files.
+
+### Key Concept
+
+Harpoon allows you to "mark" important files and instantly jump between them using number keys. Think of it as bookmarks for files you're actively working on.
+
+### Configuration
+
+<Code>
+```lua
+opts = {
+  menu = {
+    width = vim.api.nvim_win_get_width(0) - 4,
+  },
+  settings = {
+    save_on_toggle = true,
+  },
+}
+```
+</Code>
+
+### Keybindings
+
+#### Marking Files
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<leader>H` | Add file | Mark current file in harpoon |
+| `<leader>h` | Quick menu | Open harpoon quick menu |
+
+<Code>
+```lua
+{
+  "<leader>H",
+  function()
+    require("harpoon"):list():add()
+  end,
+  desc = "Harpoon File",
+}
+```
+</Code>
+
+#### Jumping to Files
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<leader>1` | Jump to file 1 | Open first harpooned file |
+| `<leader>2` | Jump to file 2 | Open second harpooned file |
+| `<leader>3` | Jump to file 3 | Open third harpooned file |
+| ... | ... | ... |
+| `<leader>9` | Jump to file 9 | Open ninth harpooned file |
+
+<Code>
+```lua
+for i = 1, 9 do
+  table.insert(keys, {
+    "<leader>" .. i,
+    function()
+      require("harpoon"):list():select(i)
+    end,
+    desc = "Harpoon to File " .. i,
+  })
+end
+```
+</Code>
+
+### Workflow Example
+
+1. Open an important file
+2. Press `<leader>H` to mark it
+3. Navigate to another file
+4. Press `<leader>H` to mark it too
+5. Press `<leader>1` to instantly return to the first file
+6. Press `<leader>2` to jump to the second file
+
+<Tip>
+Use `<leader>h` to open the quick menu and see all your harpooned files. You can reorder or remove files from this menu.
+</Tip>
+
+<Note>
+Harpoon marks are automatically saved when you toggle the quick menu, ensuring your marks persist between sessions.
+</Note>
+
+## Comparison
+
+| Feature | nvim-tree | harpoon |
+|---------|-----------|----------|
+| **Use case** | Browse all project files | Quick access to active files |
+| **View type** | Hierarchical tree | Flat list |
+| **Best for** | Discovering files | Switching between known files |
+| **Speed** | Medium | Instant |
+| **File limit** | Unlimited | Typically 1-9 files |
+
+<Note>
+Source: `lua/leyland/plugins/nvim-tree.lua` and `lua/leyland/plugins/harpoon.lua`
+</Note>

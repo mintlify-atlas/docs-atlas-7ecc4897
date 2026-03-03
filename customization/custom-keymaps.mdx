@@ -1,0 +1,321 @@
+---
+title: Custom Keymaps
+description: Learn how to add and customize keybindings in nvim-luffy
+---
+
+Keymaps (keybindings) are defined in `lua/leyland/core/keymaps.lua`. This guide will show you how to add custom keybindings and understand the existing ones.
+
+## Understanding vim.keymap.set
+
+Nvim-luffy uses `vim.keymap.set()` to define keybindings. The basic syntax is:
+
+```lua
+vim.keymap.set(mode, keys, action, options)
+```
+
+### Parameters
+
+- **mode**: The Vim mode(s) where the keymap applies
+  - `"n"` - Normal mode
+  - `"i"` - Insert mode
+  - `"v"` - Visual mode
+  - `"x"` - Visual block mode
+  - `"t"` - Terminal mode
+  - `""` - All modes
+- **keys**: The key combination to trigger the action
+- **action**: The command or function to execute
+- **options**: Optional table with additional settings
+  - `desc` - Description shown in which-key and help
+  - `silent` - Don't show command in command line
+  - `noremap` - Don't allow remapping (default: true)
+  - `buffer` - Buffer-local keymap
+
+## Current Keymaps
+
+### Leader Key
+
+The leader key is set to `Space`:
+
+```lua
+vim.g.mapleader = " "
+```
+
+<Tip>
+  The leader key acts as a prefix for custom keybindings. For example, `<leader>|` means pressing `Space` then `|`.
+</Tip>
+
+### Window Management
+
+```lua
+-- Split window vertically
+keymap.set("n", "<leader>|", "<C-w>v", { desc = "Split window vertically" })
+
+-- Split window horizontally
+keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" })
+```
+
+### Buffer Management
+
+```lua
+-- Close current buffer
+keymap.set("n", "<leader>bd", "<cmd>bd<CR>", { desc = "Close buffer" })
+
+-- Close all buffers
+keymap.set("n", "<leader>ba", "<cmd>%bd<CR>", { desc = "Close all buffers" })
+```
+
+## Adding Custom Keymaps
+
+<Steps>
+  <Step title="Open keymaps.lua">
+    Open `lua/leyland/core/keymaps.lua`
+  </Step>
+
+  <Step title="Add your keymaps">
+    Add new keymaps using `vim.keymap.set()`:
+
+    ```lua
+    -- Save file with Ctrl+s
+    keymap.set("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
+
+    -- Move selected lines up/down in visual mode
+    keymap.set("v", "J", "<cmd>m '>+1<CR>gv=gv", { desc = "Move line down" })
+    keymap.set("v", "K", "<cmd>m '<-2<CR>gv=gv", { desc = "Move line up" })
+
+    -- Better indenting (stay in visual mode)
+    keymap.set("v", "<", "<gv", { desc = "Indent left" })
+    keymap.set("v", ">", ">gv", { desc = "Indent right" })
+    ```
+  </Step>
+
+  <Step title="Source the file">
+    Run `:source %` or restart Neovim to apply the changes.
+  </Step>
+</Steps>
+
+## Common Keymap Patterns
+
+### Execute Vim Commands
+
+Use `<cmd>` to execute Ex commands:
+
+```lua
+-- Clear search highlights
+keymap.set("n", "<leader>nh", "<cmd>nohl<CR>", { desc = "Clear search highlights" })
+
+-- Toggle line numbers
+keymap.set("n", "<leader>n", "<cmd>set nu!<CR>", { desc = "Toggle line numbers" })
+```
+
+### Execute Lua Functions
+
+Pass a function to execute Lua code:
+
+```lua
+-- Custom function keymap
+keymap.set("n", "<leader>tt", function()
+  print("Hello from custom keymap!")
+end, { desc = "Test keymap" })
+
+-- Toggle background
+keymap.set("n", "<leader>bg", function()
+  if vim.o.background == "dark" then
+    vim.o.background = "light"
+  else
+    vim.o.background = "dark"
+  end
+end, { desc = "Toggle background" })
+```
+
+### Plugin-Specific Keymaps
+
+For plugin-specific keymaps, define them in the plugin's configuration file:
+
+```lua
+-- In lua/leyland/plugins/telescope.lua
+return {
+  "nvim-telescope/telescope.nvim",
+  keys = {
+    { "<leader>ff", "<cmd>Telescope find_files<CR>", desc = "Find files" },
+    { "<leader>fg", "<cmd>Telescope live_grep<CR>", desc = "Live grep" },
+    { "<leader>fb", "<cmd>Telescope buffers<CR>", desc = "Find buffers" },
+  },
+}
+```
+
+<Tip>
+  Defining keymaps in plugin specs enables lazy-loading: the plugin only loads when you press the key.
+</Tip>
+
+## Multi-Mode Keymaps
+
+You can define a keymap for multiple modes:
+
+```lua
+-- Same keymap for normal and visual mode
+keymap.set({"n", "v"}, "<leader>y", '"+y', { desc = "Copy to system clipboard" })
+
+-- Same keymap for all modes
+keymap.set("", "<C-q>", "<cmd>qa<CR>", { desc = "Quit all" })
+```
+
+## Buffer-Local Keymaps
+
+Create keymaps that only work in specific buffers:
+
+```lua
+-- This would typically be in an autocommand or LSP on_attach
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, {
+  buffer = bufnr,
+  desc = "Go to definition"
+})
+```
+
+## Keymap Examples
+
+### Navigation Improvements
+
+```lua
+-- Keep cursor centered when scrolling
+keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll down and center" })
+keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Scroll up and center" })
+
+-- Keep cursor centered when searching
+keymap.set("n", "n", "nzzzv", { desc = "Next search result" })
+keymap.set("n", "N", "Nzzzv", { desc = "Previous search result" })
+```
+
+### Quick File Operations
+
+```lua
+-- Save file
+keymap.set("n", "<leader>w", "<cmd>w<CR>", { desc = "Save file" })
+
+-- Save and quit
+keymap.set("n", "<leader>wq", "<cmd>wq<CR>", { desc = "Save and quit" })
+
+-- Quit without saving
+keymap.set("n", "<leader>q", "<cmd>q!<CR>", { desc = "Quit without saving" })
+```
+
+### Text Manipulation
+
+```lua
+-- Delete without copying to clipboard
+keymap.set({"n", "v"}, "<leader>d", '"_d', { desc = "Delete without yank" })
+
+-- Replace word under cursor
+keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], 
+  { desc = "Replace word under cursor" })
+
+-- Make current file executable
+keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { desc = "Make file executable" })
+```
+
+### Window Navigation
+
+```lua
+-- Move between windows
+keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
+keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to bottom window" })
+keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to top window" })
+keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
+
+-- Resize windows
+keymap.set("n", "<C-Up>", "<cmd>resize +2<CR>", { desc = "Increase window height" })
+keymap.set("n", "<C-Down>", "<cmd>resize -2<CR>", { desc = "Decrease window height" })
+keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "Decrease window width" })
+keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase window width" })
+```
+
+## Best Practices
+
+### 1. Use Descriptive Names
+
+Always include a `desc` option to document what the keymap does:
+
+```lua
+-- Good
+keymap.set("n", "<leader>bd", "<cmd>bd<CR>", { desc = "Close buffer" })
+
+-- Bad
+keymap.set("n", "<leader>bd", "<cmd>bd<CR>")
+```
+
+### 2. Group Related Keymaps
+
+Organize keymaps by functionality:
+
+```lua
+-- Window management
+keymap.set("n", "<leader>|", "<C-w>v", { desc = "Split window vertically" })
+keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" })
+
+-- Buffer management
+keymap.set("n", "<leader>bd", "<cmd>bd<CR>", { desc = "Close buffer" })
+keymap.set("n", "<leader>ba", "<cmd>%bd<CR>", { desc = "Close all buffers" })
+```
+
+### 3. Use Consistent Prefixes
+
+Establish patterns for your keymaps:
+
+- `<leader>f` - Find/search operations
+- `<leader>b` - Buffer operations
+- `<leader>w` - Window operations
+- `<leader>g` - Git operations
+- `<leader>t` - Toggle operations
+
+### 4. Avoid Conflicts
+
+Check that your keymaps don't override important Vim defaults or plugin keymaps:
+
+```lua
+-- Check existing keymaps
+:verbose map <leader>ff
+```
+
+<Warning>
+  Avoid overriding essential Vim keybindings like `y` (yank), `d` (delete), `c` (change) unless you have a good reason.
+</Warning>
+
+### 5. Use Leader Key
+
+Prefix custom keymaps with the leader key to avoid conflicts:
+
+```lua
+-- Good - uses leader
+keymap.set("n", "<leader>w", "<cmd>w<CR>")
+
+-- Risky - might conflict with plugins
+keymap.set("n", "w", "<cmd>w<CR>")
+```
+
+## Viewing Active Keymaps
+
+To see all active keymaps in Neovim:
+
+```vim
+:map           " All modes
+:nmap          " Normal mode
+:imap          " Insert mode
+:vmap          " Visual mode
+
+" Search for specific keymap
+:map <leader>bd
+
+" See keymap with source info
+:verbose map <leader>bd
+```
+
+## Removing Keymaps
+
+To remove an existing keymap:
+
+```lua
+-- Remove a keymap
+vim.keymap.del("n", "<leader>bd")
+
+-- Remove from specific buffer
+vim.keymap.del("n", "<leader>bd", { buffer = bufnr })
+```

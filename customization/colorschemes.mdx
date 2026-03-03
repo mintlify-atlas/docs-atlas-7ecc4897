@@ -1,0 +1,153 @@
+---
+title: Colorschemes
+description: Configure and switch between colorschemes in nvim-luffy
+---
+
+nvim-luffy comes with six pre-installed colorschemes that you can easily switch between.
+
+## Available Colorschemes
+
+The following colorschemes are installed by default:
+
+- **catppuccin** - Soothing pastel theme with excellent syntax highlighting
+- **tokyonight** - Clean, dark theme inspired by Tokyo's night skyline
+- **rose-pine** - All natural pine, faux fur and a bit of soho vibes
+- **onedark** - Atom's iconic One Dark theme for Neovim
+- **bamboo** - Warm, comfortable colorscheme (currently set as default)
+- **modus-themes** - Elegant, highly legible themes by Protesilaos Stavrou
+
+## Switching Colorschemes
+
+To change your active colorscheme, edit the configuration in `lua/leyland/plugins/colorscheme.lua`:
+
+<Steps>
+  <Step title="Open the colorscheme configuration">
+    Navigate to `lua/leyland/plugins/colorscheme.lua` in your Neovim config directory.
+  </Step>
+
+  <Step title="Find the config function">
+    Locate the `config` function in the rose-pine plugin spec (around line 35):
+
+    ```lua
+    config = function()
+      -- Set your default theme here
+      vim.cmd.colorscheme("bamboo")
+    end,
+    ```
+  </Step>
+
+  <Step title="Change the colorscheme">
+    Replace `"bamboo"` with your preferred colorscheme:
+
+    ```lua
+    config = function()
+      -- Set your default theme here
+      vim.cmd.colorscheme("catppuccin")
+    end,
+    ```
+  </Step>
+
+  <Step title="Restart Neovim">
+    Restart Neovim or run `:source %` to apply the changes.
+  </Step>
+</Steps>
+
+<Tip>
+  You can also change colorschemes temporarily by running `:colorscheme <name>` in Neovim. For example: `:colorscheme tokyonight`
+</Tip>
+
+## Configuration Structure
+
+The `colorscheme.lua` file returns a table of plugin specifications for lazy.nvim. Here's the structure:
+
+```lua
+return {
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+  },
+  {
+    "folke/tokyonight.nvim",
+    priority = 1000,
+  },
+  -- ... more colorscheme plugins
+  {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    priority = 1000,
+    config = function()
+      -- This is where the colorscheme is activated
+      vim.cmd.colorscheme("bamboo")
+    end,
+  },
+}
+```
+
+### Key Properties
+
+- **priority**: Set to `1000` to ensure colorschemes load before other plugins
+- **name**: Optional alias for the plugin (useful for colorschemes with different package names)
+- **config**: Function that runs after the plugin loads - this is where you set the active colorscheme
+- **lazy**: Set to `false` to load the plugin immediately on startup
+
+## Adding Custom Colorschemes
+
+To add a new colorscheme:
+
+<Steps>
+  <Step title="Add the plugin spec">
+    Add a new table entry to `colorscheme.lua` with the plugin repository:
+
+    ```lua
+    {
+      "rebelot/kanagawa.nvim",
+      priority = 1000,
+    },
+    ```
+  </Step>
+
+  <Step title="Set as default (optional)">
+    Update the `config` function to use your new colorscheme:
+
+    ```lua
+    config = function()
+      vim.cmd.colorscheme("kanagawa")
+    end,
+    ```
+  </Step>
+
+  <Step title="Restart and sync">
+    Restart Neovim. Lazy.nvim will automatically install the new colorscheme plugin.
+  </Step>
+</Steps>
+
+<Warning>
+  Make sure only one `config` function sets a colorscheme using `vim.cmd.colorscheme()`. Having multiple will cause conflicts.
+</Warning>
+
+## Theme-Specific Configuration
+
+Some colorschemes support additional configuration. For example, the commented-out onedark configuration:
+
+```lua
+{
+  "navarasu/onedark.nvim",
+  priority = 1000,
+  config = function()
+    require("onedark").setup({
+      style = "deep", -- Options: dark, darker, cool, deep, warm, warmer
+    })
+    require("onedark").load()
+  end,
+},
+```
+
+Refer to each colorscheme's documentation for available options:
+
+- [Catppuccin](https://github.com/catppuccin/nvim)
+- [Tokyo Night](https://github.com/folke/tokyonight.nvim)
+- [Rose Pine](https://github.com/rose-pine/neovim)
+- [One Dark](https://github.com/navarasu/onedark.nvim)
+- [Bamboo](https://github.com/ribru17/bamboo.nvim)
+- [Modus Themes](https://github.com/miikanissi/modus-themes.nvim)

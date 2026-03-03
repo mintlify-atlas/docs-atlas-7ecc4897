@@ -1,0 +1,117 @@
+---
+title: Configuration Overview
+description: Understanding the structure and organization of nvim-luffy
+---
+
+## Configuration Structure
+
+nvim-luffy uses a modular configuration structure that separates concerns into distinct directories:
+
+```
+├── init.lua                 # Entry point
+├── lua/leyland/
+│   ├── core/               # Core Neovim settings
+│   │   ├── init.lua
+│   │   ├── options.lua
+│   │   ├── keymaps.lua
+│   │   └── autocommands.lua
+│   ├── plugins/            # Plugin configurations
+│   ├── lazy.lua            # Lazy.nvim plugin manager setup
+│   └── lsp/                # LSP configurations
+```
+
+## How the Configuration Loads
+
+The configuration is loaded through a sequential initialization process:
+
+### 1. Entry Point (init.lua)
+
+The main `init.lua` file at the root serves as the entry point:
+
+```lua init.lua
+require("leyland.core")
+require("leyland.lazy")
+require("leyland.lsp")
+```
+
+This loads three main components in order:
+- **Core settings**: Basic Neovim options, keymaps, and autocommands
+- **Plugin manager**: Lazy.nvim setup and plugin specifications
+- **LSP configuration**: Language server protocol settings
+
+### 2. Core Module (lua/leyland/core/init.lua)
+
+The core module initializes fundamental settings:
+
+```lua lua/leyland/core/init.lua
+require("leyland.core.options")
+require("leyland.core.keymaps")
+require("leyland.core.autocommands")
+```
+
+These three files establish the foundation:
+- **options.lua**: Vim options for editor behavior
+- **keymaps.lua**: Base keybindings
+- **autocommands.lua**: Automatic commands for specific events
+
+## Modular Organization
+
+### Core vs Plugins
+
+The configuration distinguishes between:
+
+<AccordionGroup>
+  <Accordion title="Core Configuration">
+    Contains essential Neovim settings that don't depend on plugins:
+    - Editor options (line numbers, indentation, search behavior)
+    - Basic keymaps (window splits, buffer management)
+    - Autocommands (highlight on yank, auto-clear search)
+    
+    These load first to ensure a functional editor even if plugins fail.
+  </Accordion>
+
+  <Accordion title="Plugin Configuration">
+    Each plugin has its own file in `lua/leyland/plugins/`:
+    - Self-contained plugin specifications
+    - Plugin-specific keymaps defined within plugin files
+    - Plugin options and callbacks
+    
+    Managed by Lazy.nvim for lazy loading and performance optimization.
+  </Accordion>
+</AccordionGroup>
+
+### Benefits of This Structure
+
+<CardGroup cols={2}>
+  <Card title="Modularity" icon="puzzle-piece">
+    Each file has a single responsibility, making it easy to locate and modify specific settings.
+  </Card>
+  
+  <Card title="Maintainability" icon="wrench">
+    Changes to one component don't affect others, reducing the risk of breaking configurations.
+  </Card>
+  
+  <Card title="Performance" icon="gauge-high">
+    Lazy loading plugins and separating core settings ensures fast startup times.
+  </Card>
+  
+  <Card title="Clarity" icon="eye">
+    Clear separation between core Neovim settings and plugin-specific configurations.
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card title="Options" icon="sliders" href="/configuration/options">
+    Learn about all vim options configured in options.lua
+  </Card>
+  
+  <Card title="Keymaps" icon="keyboard" href="/configuration/keymaps">
+    Explore all keybindings and shortcuts
+  </Card>
+  
+  <Card title="Autocommands" icon="bolt" href="/configuration/autocommands">
+    Understand automatic behaviors and event handlers
+  </Card>
+</CardGroup>

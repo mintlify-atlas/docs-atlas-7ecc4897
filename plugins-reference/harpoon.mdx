@@ -1,0 +1,220 @@
+---
+title: Harpoon
+description: Quick file navigation and marking plugin
+---
+
+Harpoon is a navigation plugin that lets you mark files and quickly jump between them. Think of it as a "bookmark" system for your most frequently accessed files during a work session.
+
+## Purpose
+
+Harpoon provides lightning-fast file switching in nvim-luffy:
+
+- Mark important files with a single keypress
+- Jump to marked files instantly using number keys
+- Maintain a focused list of files you're actively working on
+- Persistent marks across Neovim sessions
+- Quick menu for viewing and managing marks
+
+<Note>
+Created by ThePrimeagen, Harpoon is designed for developers who work on multiple files simultaneously and want instant access to their active file set.
+</Note>
+
+## Configuration
+
+<Accordion title="View Full Configuration">
+```lua ~/workspace/source/lua/leyland/plugins/harpoon.lua
+return {
+	"ThePrimeagen/harpoon",
+	branch = "harpoon2",
+	opts = {
+		menu = {
+			width = vim.api.nvim_win_get_width(0) - 4,
+		},
+		settings = {
+			save_on_toggle = true,
+		},
+	},
+	keys = function()
+		local keys = {
+			{
+				"<leader>H",
+				function()
+					require("harpoon"):list():add()
+				end,
+				desc = "Harpoon File",
+			},
+			{
+				"<leader>h",
+				function()
+					local harpoon = require("harpoon")
+					harpoon.ui:toggle_quick_menu(harpoon:list())
+				end,
+				desc = "Harpoon Quick Menu",
+			},
+		}
+
+		for i = 1, 9 do
+			table.insert(keys, {
+				"<leader>" .. i,
+				function()
+					require("harpoon"):list():select(i)
+				end,
+				desc = "Harpoon to File " .. i,
+			})
+		end
+		return keys
+	end,
+}
+```
+</Accordion>
+
+## Key Settings
+
+### Menu Configuration
+
+- **Dynamic width** - Menu takes full window width minus padding
+- **save_on_toggle: true** - Automatically saves marks when toggling menu
+
+### Harpoon 2
+
+<Note>
+nvim-luffy uses Harpoon 2, the latest version with improved performance and a cleaner API.
+</Note>
+
+## Keybindings
+
+### Mark Management
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `<leader>H` | Normal | Add File | Mark the current file (capital H) |
+| `<leader>h` | Normal | Quick Menu | Open harpoon menu to view/manage marks |
+
+### File Navigation
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `<leader>1` | Normal | Jump to File 1 | Switch to first harpooned file |
+| `<leader>2` | Normal | Jump to File 2 | Switch to second harpooned file |
+| `<leader>3` | Normal | Jump to File 3 | Switch to third harpooned file |
+| `<leader>4` | Normal | Jump to File 4 | Switch to fourth harpooned file |
+| `<leader>5` | Normal | Jump to File 5 | Switch to fifth harpooned file |
+| `<leader>6` | Normal | Jump to File 6 | Switch to sixth harpooned file |
+| `<leader>7` | Normal | Jump to File 7 | Switch to seventh harpooned file |
+| `<leader>8` | Normal | Jump to File 8 | Switch to eighth harpooned file |
+| `<leader>9` | Normal | Jump to File 9 | Switch to ninth harpooned file |
+
+<Tip>
+You can mark up to 9 files and jump between them instantly using `<leader>` followed by a number.
+</Tip>
+
+## Usage Examples
+
+### Basic Workflow
+
+```plaintext
+Typical harpoon workflow:
+1. Open a file you'll work on frequently
+2. Press <leader>H (shift+h) to mark it
+3. Navigate to another file
+4. Press <leader>H to mark it too
+5. Jump between files using <leader>1, <leader>2, etc.
+```
+
+### Marking Files
+
+<Note>
+Use capital H (`<leader>H`) to mark files. This prevents accidental marking and makes the action deliberate.
+</Note>
+
+```plaintext
+Mark your active files:
+1. Open src/index.ts
+2. Press <leader>H to mark it as file #1
+3. Open src/components/Header.tsx
+4. Press <leader>H to mark it as file #2
+5. Open src/utils/api.ts
+6. Press <leader>H to mark it as file #3
+```
+
+### Quick Navigation
+
+<Tip>
+Once marked, you can jump to any file from anywhere in your project with just two keystrokes.
+</Tip>
+
+```plaintext
+Navigate between marked files:
+1. Press <leader>1 to jump to src/index.ts
+2. Make changes
+3. Press <leader>2 to jump to Header.tsx
+4. Make changes
+5. Press <leader>3 to jump to api.ts
+6. Repeat as needed
+```
+
+### Managing Marks
+
+```plaintext
+View and edit marks:
+1. Press <leader>h to open the quick menu
+2. Use j/k to navigate the list
+3. Press Enter to jump to a file
+4. Press 'd' to delete a mark
+5. Press 'q' or Esc to close the menu
+```
+
+### Reordering Marks
+
+<Note>
+You can reorder marks in the quick menu by deleting and re-adding them in your preferred order.
+</Note>
+
+```plaintext
+Reorder your marked files:
+1. Press <leader>h to open menu
+2. Delete marks in unwanted positions
+3. Close menu and navigate to files
+4. Re-mark them in desired order with <leader>H
+```
+
+## Workflow Recommendations
+
+### Feature Development
+
+```plaintext
+When working on a feature:
+1. Mark the main feature file as #1
+2. Mark the test file as #2
+3. Mark related component as #3
+4. Mark documentation as #4
+
+Toggle between them rapidly:
+- <leader>1: Write code
+- <leader>2: Write tests
+- <leader>3: Update component
+- <leader>4: Update docs
+```
+
+### Bug Fixing
+
+```plaintext
+When debugging:
+1. Mark the file with the bug
+2. Mark related utility functions
+3. Mark test files
+4. Mark log/config files
+
+Quickly cross-reference without losing context.
+```
+
+### Code Review
+
+<Tip>
+During code reviews, mark files in the order you want to review them. Navigate through them sequentially with number keys.
+</Tip>
+
+## Related Plugins
+
+- [Telescope](/plugins-reference/telescope) - For finding files to mark
+- [nvim-tree](/plugins-reference/nvim-tree) - File tree navigation

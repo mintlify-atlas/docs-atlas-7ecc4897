@@ -1,0 +1,218 @@
+---
+title: nvim-tree
+description: File explorer tree for Neovim
+---
+
+nvim-tree is a file explorer that provides a sidebar tree view of your project structure. It replaces Neovim's default netrw file explorer with a modern, feature-rich alternative.
+
+## Purpose
+
+nvim-tree serves as the primary file explorer in nvim-luffy, offering:
+
+- Visual tree structure of your project
+- File and directory operations (create, delete, rename, etc.)
+- Git status indicators
+- Quick file navigation
+- Right-side positioning for better workflow
+
+## Configuration
+
+<Accordion title="View Full Configuration">
+```lua ~/workspace/source/lua/leyland/plugins/nvim-tree.lua
+return {
+	"nvim-tree/nvim-tree.lua",
+	dependencies = "nvim-tree/nvim-web-devicons",
+	keys = {
+		{ "<leader>e", "<cmd>NvimTreeFindFileToggle<cr>", desc = "Toggle file explorer" },
+	},
+	config = function()
+		local nvimtree = require("nvim-tree")
+		local api = require("nvim-tree.api")
+
+		vim.g.loaded_netrw = 1
+		vim.g.loaded_netrwPlugin = 1
+
+		local function on_attach(bufnr)
+			local function opts(desc)
+				return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+			end
+
+			-- Default mappings
+			api.config.mappings.default_on_attach(bufnr)
+
+			-- Custom mappings
+			vim.keymap.set("n", "l", api.node.open.edit, opts("Open"))
+			vim.keymap.set("n", "h", api.node.navigate.parent_close, opts("Close Directory"))
+		end
+
+		nvimtree.setup({
+			on_attach = on_attach,
+			view = {
+				width = 50,
+				relativenumber = true,
+				side = "right",
+			},
+			renderer = {
+				indent_markers = {
+					enable = true,
+				},
+				icons = {
+					glyphs = {
+						folder = {
+							arrow_closed = "",
+							arrow_open = "",
+						},
+					},
+				},
+			},
+			actions = {
+				open_file = {
+					window_picker = {
+						enable = false,
+					},
+				},
+			},
+			filters = {
+				custom = { ".DS_Store" },
+			},
+			git = {
+				ignore = false,
+			},
+		})
+	end,
+}
+```
+</Accordion>
+
+## Key Settings
+
+### View Configuration
+
+- **width: 50** - Wide tree view for better readability
+- **relativenumber: true** - Shows relative line numbers for easy navigation
+- **side: "right"** - Positions the tree on the right side (unique to nvim-luffy)
+
+<Note>
+Most Neovim configurations place the file tree on the left. nvim-luffy positions it on the right for a distinctive workflow that keeps your code aligned to the left edge.
+</Note>
+
+### Renderer Options
+
+- **indent_markers: enabled** - Shows visual guides for nested directories
+- **Custom folder icons** - Uses  and  for collapsed/expanded folders
+
+### Git Integration
+
+- **ignore: false** - Shows all files, including those in .gitignore (useful for viewing full project structure)
+
+### Filters
+
+- Automatically hides `.DS_Store` files (macOS system files)
+
+## Keybindings
+
+### Global Mappings
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `<leader>e` | Normal | Toggle Explorer | Open/close file explorer and locate current file |
+
+### Tree Window Mappings
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `l` | Normal | Open | Open file or expand directory |
+| `h` | Normal | Close Directory | Close/collapse directory |
+
+<Tip>
+The `l` (right) and `h` (left) custom mappings provide Vim-like navigation: `l` to expand/enter, `h` to collapse/exit. This feels natural for Vim users.
+</Tip>
+
+### Default Mappings
+
+In addition to the custom mappings, all default nvim-tree mappings are available:
+
+- `a` - Create new file/directory
+- `d` - Delete file/directory
+- `r` - Rename file/directory
+- `x` - Cut file/directory
+- `c` - Copy file/directory
+- `p` - Paste file/directory
+- `y` - Copy name to clipboard
+- `Y` - Copy relative path to clipboard
+- `gy` - Copy absolute path to clipboard
+- `R` - Refresh tree
+- `q` - Close tree
+
+## Usage Examples
+
+### Opening the File Explorer
+
+```plaintext
+1. Press <leader>e to toggle the file tree
+2. The tree opens on the right side
+3. Current file is automatically located and highlighted
+```
+
+### Navigating the Tree
+
+<Note>
+Use `j`/`k` to move up and down, `l` to open/expand, `h` to close/collapse. This mirrors Vim motion keys.
+</Note>
+
+```plaintext
+Navigation workflow:
+1. Press j/k to move through files
+2. Press l to expand a directory
+3. Press h to collapse a directory
+4. Press l on a file to open it
+```
+
+### Creating Files and Directories
+
+```plaintext
+Create a new file:
+1. Navigate to the parent directory
+2. Press 'a' (add)
+3. Type the filename
+4. Press Enter
+
+Create a new directory:
+1. Navigate to the parent directory
+2. Press 'a' (add)
+3. Type the directory name with trailing slash: "newdir/"
+4. Press Enter
+```
+
+### File Operations
+
+<Tip>
+Use standard cut/copy/paste operations: `x` to cut, `c` to copy, `p` to paste. Works just like a traditional file manager.
+</Tip>
+
+```plaintext
+Move a file:
+1. Navigate to the file
+2. Press 'x' to cut
+3. Navigate to destination directory
+4. Press 'p' to paste
+
+Copy a file:
+1. Navigate to the file
+2. Press 'c' to copy
+3. Navigate to destination directory
+4. Press 'p' to paste
+```
+
+### Copying File Paths
+
+```plaintext
+Copy filename: Press 'y'
+Copy relative path: Press 'Y'
+Copy absolute path: Press 'gy'
+```
+
+## Related Plugins
+
+- [Telescope](/plugins-reference/telescope) - Fuzzy file finder
+- [Harpoon](/plugins-reference/harpoon) - Quick file navigation

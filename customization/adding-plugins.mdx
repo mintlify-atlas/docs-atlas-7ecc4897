@@ -1,0 +1,313 @@
+---
+title: Adding Plugins
+description: Step-by-step guide to add new plugins to nvim-luffy
+---
+
+nvim-luffy uses [lazy.nvim](https://github.com/folke/lazy.nvim) as its plugin manager. This guide will show you how to add and configure new plugins.
+
+## Plugin Directory Structure
+
+Plugins are organized in the `lua/leyland/plugins/` directory:
+
+```
+lua/leyland/plugins/
+├── init.lua           # Simple plugins without configuration
+├── colorscheme.lua    # Colorscheme plugins
+├── autopairs.lua      # nvim-autopairs configuration
+├── harpoon.lua        # Harpoon configuration
+├── nvim-tree.lua      # File explorer configuration
+└── lsp/               # LSP-related plugins
+    ├── mason.lua      # LSP server management
+    └── lspconfig.lua  # LSP configuration
+```
+
+Each file returns a Lua table containing one or more plugin specifications.
+
+## Plugin Specification Structure
+
+A basic plugin spec follows this structure:
+
+```lua
+return {
+  "author/plugin-name",
+  -- Optional fields:
+  lazy = false,              -- Load on startup (default: true for lazy loading)
+  event = "VeryLazy",        -- Load on specific events
+  dependencies = {},         -- Other plugins this depends on
+  opts = {},                 -- Options passed to setup()
+  config = function() end,   -- Custom configuration function
+  keys = {},                 -- Keybindings
+  cmd = {},                  -- Commands that trigger loading
+}
+```
+
+## Adding a Simple Plugin
+
+For plugins that don't require configuration, add them to `init.lua`:
+
+<Steps>
+  <Step title="Open init.lua">
+    Open `lua/leyland/plugins/init.lua`
+  </Step>
+
+  <Step title="Add the plugin">
+    Add the plugin to the return table:
+
+    ```lua
+    return {
+      "nvim-lua/plenary.nvim",
+      "christoomey/vim-tmux-navigator",
+      "tpope/vim-sleuth", -- New plugin: auto-detect indentation
+    }
+    ```
+  </Step>
+
+  <Step title="Restart Neovim">
+    Restart Neovim. Lazy.nvim will automatically install the plugin.
+  </Step>
+</Steps>
+
+## Adding a Plugin with Configuration
+
+For plugins that need configuration, create a dedicated file:
+
+<Steps>
+  <Step title="Create a new file">
+    Create a new file in `lua/leyland/plugins/` (e.g., `comment.lua`)
+  </Step>
+
+  <Step title="Write the plugin spec">
+    Add the plugin specification with configuration:
+
+    ```lua
+    return {
+      "numToStr/Comment.nvim",
+      event = { "BufReadPre", "BufNewFile" },
+      config = function()
+        local comment = require("Comment")
+        
+        comment.setup({
+          padding = true,
+          sticky = true,
+          toggler = {
+            line = "gcc",
+            block = "gbc",
+          },
+        })
+      end,
+    }
+    ```
+  </Step>
+
+  <Step title="Restart Neovim">
+    Restart Neovim. The plugin will be installed and configured automatically.
+  </Step>
+</Steps>
+
+<Tip>
+  Use `event = { "BufReadPre", "BufNewFile" }` to lazy-load plugins only when opening a buffer. This improves startup time.
+</Tip>
+
+## Using the `opts` Property
+
+For simple configurations, use the `opts` property instead of `config`:
+
+```lua
+return {
+  "windwp/nvim-autopairs",
+  event = { "InsertEnter" },
+  opts = {
+    check_ts = true,
+    ts_config = {
+      lua = { "string" },
+      javascript = { "template_string" },
+    },
+  },
+}
+```
+
+Lazy.nvim automatically calls `require("plugin-name").setup(opts)` for you.
+
+## Plugin with Keybindings
+
+Define keybindings directly in the plugin spec:
+
+```lua
+return {
+  "ThePrimeagen/harpoon",
+  branch = "harpoon2",
+  keys = function()
+    local keys = {
+      {
+        "<leader>H",
+        function()
+          require("harpoon"):list():add()
+        end,
+        desc = "Harpoon File",
+      },
+      {
+        "<leader>h",
+        function()
+          local harpoon = require("harpoon")
+          harpoon.ui:toggle_quick_menu(harpoon:list())
+        end,
+        desc = "Harpoon Quick Menu",
+      },
+    }
+    return keys
+  end,
+}
+```
+
+<Tip>
+  Defining keybindings in the plugin spec ensures the plugin is lazy-loaded until the key is pressed.
+</Tip>
+
+## Plugin with Dependencies
+
+Some plugins require other plugins to function:
+
+```lua
+return {
+  "windwp/nvim-autopairs",
+  event = { "InsertEnter" },
+  dependencies = {
+    "hrsh7th/nvim-cmp",
+  },
+  config = function()
+    local autopairs = require("nvim-autopairs")
+    autopairs.setup({
+      check_ts = true,
+    })
+    
+    -- Integrate with nvim-cmp
+    local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+    local cmp = require("cmp")
+    cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+  end,
+}
+```
+
+Lazy.nvim ensures dependencies are installed and loaded before the main plugin.
+
+## Multiple Plugins in One File
+
+You can return multiple plugin specs in a single file:
+
+```lua
+return {
+  {
+    "williamboman/mason.nvim",
+    opts = {
+      ui = {
+        icons = {
+          package_installed = "✓",
+        },
+      },
+    },
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    opts = {
+      ensure_installed = { "lua_ls", "ts_ls" },
+    },
+    dependencies = {
+      "williamboman/mason.nvim",
+    },
+  },
+}
+```
+
+## Managing Plugins
+
+### View Installed Plugins
+
+Run `:Lazy` to open the Lazy.nvim UI and see all installed plugins.
+
+### Update Plugins
+
+Run `:Lazy update` to update all plugins to their latest versions.
+
+### Remove a Plugin
+
+<Steps>
+  <Step title="Delete or comment out the plugin spec">
+    Remove the plugin from your configuration files.
+  </Step>
+
+  <Step title="Restart Neovim">
+    Restart Neovim.
+  </Step>
+
+  <Step title="Run clean command">
+    Run `:Lazy clean` to remove unused plugins.
+  </Step>
+</Steps>
+
+<Warning>
+  Always check a plugin's README for specific setup instructions. Some plugins require additional dependencies or configuration steps.
+</Warning>
+
+## Common Plugin Patterns
+
+### Load on File Type
+
+```lua
+{
+  "iamcco/markdown-preview.nvim",
+  ft = "markdown",
+  build = "cd app && npm install",
+}
+```
+
+### Load on Command
+
+```lua
+{
+  "stevearc/oil.nvim",
+  cmd = "Oil",
+}
+```
+
+### Load on Event
+
+```lua
+{
+  "lewis6991/gitsigns.nvim",
+  event = { "BufReadPre", "BufNewFile" },
+}
+```
+
+## Example: Adding a New Plugin
+
+Let's add the `gitsigns.nvim` plugin for git integration:
+
+<Steps>
+  <Step title="Create the plugin file">
+    Create `lua/leyland/plugins/gitsigns.lua`
+  </Step>
+
+  <Step title="Add the configuration">
+    ```lua
+    return {
+      "lewis6991/gitsigns.nvim",
+      event = { "BufReadPre", "BufNewFile" },
+      opts = {
+        signs = {
+          add = { text = "│" },
+          change = { text = "│" },
+          delete = { text = "_" },
+          topdelete = { text = "‾" },
+          changedelete = { text = "~" },
+        },
+      },
+    }
+    ```
+  </Step>
+
+  <Step title="Restart Neovim">
+    Restart Neovim and the plugin will be installed automatically.
+  </Step>
+</Steps>
+
+That's it! The plugin is now installed and configured.

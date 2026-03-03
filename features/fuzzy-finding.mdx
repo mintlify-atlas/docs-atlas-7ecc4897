@@ -1,0 +1,211 @@
+---
+title: 'Fuzzy Finding'
+description: 'Fast file and text search with Telescope'
+---
+
+## Overview
+
+Telescope is a highly extendable fuzzy finder that provides fast searching across files, text, commands, and more. It uses fzf-native for optimal performance.
+
+## Key Features
+
+- **Fuzzy file finding** across your entire project
+- **Live grep** for searching text content
+- **Recent files** quick access
+- **String search** under cursor
+- **Todo comments** finding
+- **Keymap** exploration
+
+## Configuration
+
+<Code>
+```lua
+telescope.setup({
+  defaults = {
+    path_display = { "filename_first" },
+    mappings = {
+      i = {
+        ["<C-k>"] = actions.move_selection_previous,
+        ["<C-j>"] = actions.move_selection_next,
+        ["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+      },
+    },
+  },
+})
+```
+</Code>
+
+### Display Settings
+
+- **filename_first**: Shows filename before directory path for easier scanning
+- **truncate**: Long paths in live_grep are truncated to fit the screen
+
+### Extensions
+
+<Code>
+```lua
+telescope.load_extension("fzf")
+```
+</Code>
+
+<Tip>
+The fzf extension provides native performance with faster sorting and filtering algorithms.
+</Tip>
+
+## Pickers
+
+Telescope provides several specialized pickers for different search tasks:
+
+### find_files
+
+Search and open files in your current working directory.
+
+<ParamField path="find_files" type="Picker">
+  Fuzzy find files by filename in your project
+</ParamField>
+
+<Code>
+```lua
+keymap.set("n", "<leader><leader>", "<cmd>Telescope find_files<cr>", 
+  { desc = "Fuzzy find files in cwd" })
+```
+</Code>
+
+### live_grep
+
+Search for text content across all files in real-time.
+
+<ParamField path="live_grep" type="Picker">
+  Real-time text search with ripgrep backend
+</ParamField>
+
+<Code>
+```lua
+keymap.set("n", "<leader>/", "<cmd>Telescope live_grep<cr>", 
+  { desc = "Find string in cwd" })
+```
+</Code>
+
+### oldfiles
+
+Quickly access recently opened files.
+
+<ParamField path="oldfiles" type="Picker">
+  Browse and open recently used files
+</ParamField>
+
+<Code>
+```lua
+keymap.set("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", 
+  { desc = "Fuzzy find recent files" })
+```
+</Code>
+
+### grep_string
+
+Search for the word under cursor across the project.
+
+<ParamField path="grep_string" type="Picker">
+  Find all occurrences of the current word
+</ParamField>
+
+<Code>
+```lua
+keymap.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", 
+  { desc = "Find string under cursor in cwd" })
+```
+</Code>
+
+### TodoTelescope
+
+Find TODO, FIXME, and other comment annotations.
+
+<ParamField path="TodoTelescope" type="Picker">
+  Search for TODO comments across the codebase
+</ParamField>
+
+<Code>
+```lua
+keymap.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", 
+  { desc = "Find todos" })
+```
+</Code>
+
+### keymaps
+
+Explore all available keymaps.
+
+<ParamField path="keymaps" type="Picker">
+  Browse and search all configured keybindings
+</ParamField>
+
+<Code>
+```lua
+keymap.set("n", "<leader>fk", "<cmd>Telescope keymaps<cr>", 
+  { desc = "Find todos" })
+```
+</Code>
+
+## Keybindings
+
+### Global Keymaps
+
+| Key | Picker | Description |
+|-----|--------|-------------|
+| `<leader><leader>` | find_files | Fuzzy find files in current directory |
+| `<leader>fr` | oldfiles | Browse recent files |
+| `<leader>/` | live_grep | Search text across all files |
+| `<leader>fc` | grep_string | Find word under cursor |
+| `<leader>ft` | TodoTelescope | Find TODO comments |
+| `<leader>fk` | keymaps | Browse keybindings |
+
+### Inside Telescope (Insert Mode)
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<C-k>` | Previous | Move to previous result |
+| `<C-j>` | Next | Move to next result |
+| `<C-q>` | Quickfix | Send selected items to quickfix list |
+
+<Code>
+```lua
+mappings = {
+  i = {
+    ["<C-k>"] = actions.move_selection_previous,
+    ["<C-j>"] = actions.move_selection_next,
+    ["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+  },
+}
+```
+</Code>
+
+## Dependencies
+
+Telescope relies on several plugins for full functionality:
+
+- **plenary.nvim** - Core Lua utilities (required)
+- **telescope-fzf-native.nvim** - Native fzf implementation for speed
+- **nvim-web-devicons** - File type icons
+- **todo-comments.nvim** - TODO comment integration
+
+## Usage Tips
+
+<Tip>
+**File finding**: Press `<leader><leader>` and start typing any part of the filename. Telescope uses fuzzy matching, so "usmgr" will match "user-manager.ts".
+</Tip>
+
+<Tip>
+**Text search**: Use `<leader>/` for live grep. Start typing and results appear in real-time. Great for finding function definitions or variable usage.
+</Tip>
+
+<Tip>
+**Quick navigation**: Hover over any search result and use `<C-k>` or `<C-j>` to navigate without leaving insert mode.
+</Tip>
+
+<Note>
+Telescope pickers respect your `.gitignore` files by default, keeping search results focused on project files.
+</Note>
+
+<Note>
+Source: `lua/leyland/plugins/telescope.lua:15-44`
+</Note>

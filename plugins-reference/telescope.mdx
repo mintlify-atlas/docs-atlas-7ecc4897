@@ -1,0 +1,147 @@
+---
+title: Telescope
+description: Fuzzy finder and file search plugin for Neovim
+---
+
+Telescope is a highly extendable fuzzy finder over lists. It provides a powerful interface for searching files, grep content, and navigating your codebase efficiently.
+
+## Purpose
+
+Telescope serves as the primary file navigation and search tool in nvim-luffy, offering:
+
+- Fast fuzzy file finding
+- Live grep search across your project
+- Recent files navigation
+- Todo comments search integration
+- Keymap discovery
+
+## Configuration
+
+<Accordion title="View Full Configuration">
+```lua ~/workspace/source/lua/leyland/plugins/telescope.lua
+return {
+	"nvim-telescope/telescope.nvim",
+	branch = "0.1.x",
+	dependencies = {
+		"nvim-lua/plenary.nvim",
+		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+		"nvim-tree/nvim-web-devicons",
+		"folke/todo-comments.nvim",
+	},
+	config = function()
+		local telescope = require("telescope")
+		local actions = require("telescope.actions")
+		local transform_mod = require("telescope.actions.mt").transform_mod
+
+		telescope.setup({
+			defaults = {
+				path_display = { "filename_first" },
+				mappings = {
+					i = {
+						["<C-k>"] = actions.move_selection_previous,
+						["<C-j>"] = actions.move_selection_next,
+						["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+					},
+				},
+			},
+			pickers = {
+				live_grep = {
+					path_display = { "truncate" },
+				},
+			},
+		})
+
+		telescope.load_extension("fzf")
+	end,
+}
+```
+</Accordion>
+
+## Key Settings
+
+### Path Display
+
+- **filename_first**: Shows filename before the directory path for easier scanning
+- **truncate** (live_grep): Truncates long paths in grep results
+
+### Extensions
+
+- **fzf-native**: Uses native FZF algorithm for faster sorting and filtering
+
+## Keybindings
+
+### Global Mappings
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `<leader><leader>` | Normal | Find Files | Fuzzy find files in current working directory |
+| `<leader>fr` | Normal | Recent Files | Browse recently opened files |
+| `<leader>/` | Normal | Live Grep | Search for string in current working directory |
+| `<leader>fc` | Normal | Grep String | Find string under cursor in cwd |
+| `<leader>ft` | Normal | Todo Telescope | Find all TODO comments |
+| `<leader>fk` | Normal | Keymaps | Search through all keymaps |
+
+### Telescope Window Mappings
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `<C-k>` | Insert | Move Up | Move to previous result |
+| `<C-j>` | Insert | Move Down | Move to next result |
+| `<C-q>` | Insert | Send to Quickfix | Send selected items to quickfix list |
+
+## Usage Examples
+
+### Finding Files
+
+<Note>
+Press `<leader><leader>` to open the file finder. Start typing to fuzzy search for files. The filename is displayed first for easier identification.
+</Note>
+
+```plaintext
+Example workflow:
+1. Press <leader><leader>
+2. Type "tele" to find telescope.lua
+3. Press Enter to open the file
+```
+
+### Searching Code
+
+<Tip>
+Use `<leader>/` for live grep to search across your entire project. The search updates as you type.
+</Tip>
+
+```plaintext
+Search for function definitions:
+1. Press <leader>/
+2. Type "function setup"
+3. Navigate results with Ctrl+j/k
+4. Press Ctrl+q to send all results to quickfix
+```
+
+### Finding TODOs
+
+The TODO telescope integration lets you quickly find all TODO, HACK, FIXME, and other comment tags:
+
+```plaintext
+1. Press <leader>ft
+2. Browse all TODO comments in your project
+3. Press Enter to jump to the location
+```
+
+### Discovering Keymaps
+
+<Tip>
+Forgot a keybinding? Use `<leader>fk` to search through all configured keymaps with descriptions.
+</Tip>
+
+```plaintext
+1. Press <leader>fk
+2. Type "file" to find file-related keymaps
+3. See the key combination and description
+```
+
+## Related Plugins
+
+- [Harpoon](/plugins-reference/harpoon) - Quick file navigation
+- [nvim-tree](/plugins-reference/nvim-tree) - File explorer
+- [Trouble](/plugins-reference/trouble) - Diagnostics list

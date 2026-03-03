@@ -1,0 +1,265 @@
+---
+title: Keymaps
+description: Complete reference of all keybindings and shortcuts in nvim-luffy
+---
+
+## Leader Key
+
+```lua
+vim.g.mapleader = " "
+```
+
+The leader key is set to **Space**. All keymaps using `<leader>` require pressing Space first.
+
+<Tip>The leader key is displayed as `<leader>` throughout this documentation, but remember it's actually the Space key.</Tip>
+
+## Core Keymaps
+
+These keymaps are defined in `lua/leyland/core/keymaps.lua`.
+
+### Window Management
+
+| Keymap | Mode | Action | Description |
+|--------|------|--------|-------------|
+| `<leader>\|` | Normal | `<C-w>v` | Split window vertically |
+| `<leader>sh` | Normal | `<C-w>s` | Split window horizontally |
+
+<CodeGroup>
+```lua Example: Vertical Split
+-- Press Space + | to split vertically
+<leader>|
+```
+
+```lua Example: Horizontal Split
+-- Press Space + s + h to split horizontally
+<leader>sh
+```
+</CodeGroup>
+
+### Buffer Management
+
+| Keymap | Mode | Action | Description |
+|--------|------|--------|-------------|
+| `<leader>bd` | Normal | `:bd<CR>` | Close current buffer |
+| `<leader>ba` | Normal | `:%bd<CR>` | Close all buffers |
+
+<Warning>Closing all buffers with `<leader>ba` will close every open buffer. Make sure you've saved your work!</Warning>
+
+## Plugin Keymaps
+
+These keymaps are defined within their respective plugin configuration files.
+
+### Telescope (Fuzzy Finder)
+
+Defined in `lua/leyland/plugins/telescope.lua`.
+
+| Keymap | Mode | Command | Description |
+|--------|------|---------|-------------|
+| `<leader><leader>` | Normal | `:Telescope find_files` | Find files in current directory |
+| `<leader>fr` | Normal | `:Telescope oldfiles` | Find recent files |
+| `<leader>/` | Normal | `:Telescope live_grep` | Search string in current directory |
+| `<leader>fc` | Normal | `:Telescope grep_string` | Find string under cursor |
+| `<leader>ft` | Normal | `:TodoTelescope` | Find TODO comments |
+| `<leader>fk` | Normal | `:Telescope keymaps` | Show all keymaps |
+
+#### Telescope Insert Mode Mappings
+
+When inside Telescope picker:
+
+| Keymap | Action | Description |
+|--------|--------|-------------|
+| `<C-k>` | Move up | Move to previous result |
+| `<C-j>` | Move down | Move to next result |
+| `<C-q>` | Send to quickfix | Send selected items to quickfix list |
+
+<Info>The double leader keymap (`<leader><leader>`) provides the fastest way to find files - just press Space twice!</Info>
+
+### File Explorer (nvim-tree)
+
+Defined in `lua/leyland/plugins/nvim-tree.lua`.
+
+| Keymap | Mode | Command | Description |
+|--------|------|---------|-------------|
+| `<leader>e` | Normal | `:NvimTreeFindFileToggle` | Toggle file explorer |
+
+#### nvim-tree Buffer Mappings
+
+When inside nvim-tree buffer:
+
+| Keymap | Mode | Action | Description |
+|--------|------|--------|-------------|
+| `l` | Normal | Open file/directory | Open file or expand directory |
+| `h` | Normal | Close directory | Collapse parent directory |
+
+<Tip>The `h` and `l` keys in nvim-tree mirror Vim's left/right motion keys for intuitive navigation.</Tip>
+
+### Harpoon (Quick File Navigation)
+
+Defined in `lua/leyland/plugins/harpoon.lua`.
+
+| Keymap | Mode | Action | Description |
+|--------|------|--------|-------------|
+| `<leader>H` | Normal | Add file to harpoon | Mark current file in harpoon |
+| `<leader>h` | Normal | Open harpoon menu | Toggle harpoon quick menu |
+| `<leader>1` | Normal | Jump to file 1 | Jump to first harpooned file |
+| `<leader>2` | Normal | Jump to file 2 | Jump to second harpooned file |
+| `<leader>3` | Normal | Jump to file 3 | Jump to third harpooned file |
+| `<leader>4` | Normal | Jump to file 4 | Jump to fourth harpooned file |
+| `<leader>5` | Normal | Jump to file 5 | Jump to fifth harpooned file |
+| `<leader>6` | Normal | Jump to file 6 | Jump to sixth harpooned file |
+| `<leader>7` | Normal | Jump to file 7 | Jump to seventh harpooned file |
+| `<leader>8` | Normal | Jump to file 8 | Jump to eighth harpooned file |
+| `<leader>9` | Normal | Jump to file 9 | Jump to ninth harpooned file |
+
+<AccordionGroup>
+  <Accordion title="What is Harpoon?">
+    Harpoon is a file navigation tool that lets you mark important files and quickly jump between them using number keys. It's perfect for working with a small set of frequently accessed files.
+    
+    **Workflow:**
+    1. Open a file you want to mark
+    2. Press `<leader>H` to add it to harpoon
+    3. Repeat for up to 9 files
+    4. Press `<leader>1` through `<leader>9` to instantly jump to those files
+  </Accordion>
+</AccordionGroup>
+
+### Flash (Quick Motion)
+
+Defined in `lua/leyland/plugins/flash.lua`.
+
+| Keymap | Modes | Action | Description |
+|--------|-------|--------|-------------|
+| `s` | Normal, Visual, Operator | Flash jump | Quick jump to any location |
+| `S` | Normal, Visual, Operator | Flash treesitter | Jump using treesitter nodes |
+| `r` | Operator | Remote flash | Remote operation |
+| `R` | Visual, Operator | Treesitter search | Search using treesitter |
+| `<C-s>` | Command | Toggle flash | Toggle flash search in command mode |
+| `<C-space>` | Normal, Visual, Operator | Incremental selection | Treesitter incremental selection |
+
+#### Flash Char Mode Navigation
+
+When using `f`, `F`, `t`, or `T` motions:
+
+| Keymap | Action | Description |
+|--------|--------|-------------|
+| `;` | Next match | Jump to next occurrence |
+| `,` | Previous match | Jump to previous occurrence |
+
+<Info>Flash enhances Neovim's motion capabilities by adding visual labels to jump targets. Press `s` and start typing to see labels appear.</Info>
+
+### Git Integration (Neogit)
+
+Defined in `lua/leyland/plugins/neogit.lua`.
+
+| Keymap | Mode | Action | Description |
+|--------|------|--------|-------------|
+| `<leader>gg` | Normal | Open Neogit | Open Neogit in floating window |
+
+### Diagnostics (Trouble)
+
+Defined in `lua/leyland/plugins/trouble.lua`.
+
+| Keymap | Mode | Action | Description |
+|--------|------|--------|-------------|
+| `<leader>xx` | Normal | Toggle Trouble | Toggle diagnostics panel |
+
+## Disabled Keymaps
+
+These keymaps are commented out but available for activation:
+
+```lua
+-- keymap.set("i", "jk", "<ESC>", {desc = "Exit Insert mode with jk"})
+-- keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
+```
+
+- `jk` in Insert mode - Would exit Insert mode (alternative to ESC)
+- `<leader>nh` in Normal mode - Would clear search highlights (not needed due to autocommand)
+
+## Keymap Categories Summary
+
+<CardGroup cols={2}>
+  <Card title="Window Management" icon="window-restore">
+    `<leader>|` - Vertical split
+    
+    `<leader>sh` - Horizontal split
+  </Card>
+  
+  <Card title="Buffer Management" icon="file">
+    `<leader>bd` - Close buffer
+    
+    `<leader>ba` - Close all buffers
+  </Card>
+  
+  <Card title="File Navigation" icon="folder-tree">
+    `<leader><leader>` - Find files
+    
+    `<leader>e` - Toggle file explorer
+    
+    `<leader>h` - Harpoon menu
+    
+    `<leader>1-9` - Jump to harpooned files
+  </Card>
+  
+  <Card title="Search" icon="magnifying-glass">
+    `<leader>/` - Live grep
+    
+    `<leader>fc` - Grep string under cursor
+    
+    `<leader>ft` - Find TODOs
+    
+    `<leader>fk` - Find keymaps
+  </Card>
+  
+  <Card title="Motion" icon="bolt">
+    `s` - Flash jump
+    
+    `S` - Flash treesitter
+    
+    `<C-space>` - Incremental selection
+  </Card>
+  
+  <Card title="Git & Diagnostics" icon="code-branch">
+    `<leader>gg` - Open Neogit
+    
+    `<leader>xx` - Toggle diagnostics
+  </Card>
+</CardGroup>
+
+## Quick Reference Card
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    nvim-luffy Keymaps                       │
+├─────────────────────────────────────────────────────────────┤
+│ LEADER KEY: Space                                           │
+├─────────────────────────────────────────────────────────────┤
+│ Files & Navigation                                          │
+│  Space Space    Find files                                  │
+│  Space e        Toggle file explorer                        │
+│  Space fr       Recent files                                │
+│  Space H        Add to harpoon                              │
+│  Space h        Harpoon menu                                │
+│  Space 1-9      Jump to harpoon file                        │
+├─────────────────────────────────────────────────────────────┤
+│ Search                                                      │
+│  Space /        Live grep                                   │
+│  Space fc       Grep word under cursor                      │
+│  Space ft       Find TODOs                                  │
+│  Space fk       Show keymaps                                │
+├─────────────────────────────────────────────────────────────┤
+│ Windows & Buffers                                           │
+│  Space |        Split vertically                            │
+│  Space sh       Split horizontally                          │
+│  Space bd       Close buffer                                │
+│  Space ba       Close all buffers                           │
+├─────────────────────────────────────────────────────────────┤
+│ Motion                                                      │
+│  s              Flash jump                                  │
+│  S              Flash treesitter                            │
+│  Ctrl-Space     Incremental selection                       │
+├─────────────────────────────────────────────────────────────┤
+│ Git & Diagnostics                                           │
+│  Space gg       Open Neogit                                 │
+│  Space xx       Toggle Trouble diagnostics                  │
+└─────────────────────────────────────────────────────────────┘
+```

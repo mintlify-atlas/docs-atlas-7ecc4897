@@ -1,0 +1,208 @@
+---
+title: Vim Options
+description: Complete reference of all vim options configured in nvim-luffy
+---
+
+## Overview
+
+This page documents all vim options set in `lua/leyland/core/options.lua`. These options control the editor's behavior, appearance, and functionality.
+
+<Info>All options are set using `vim.opt` which provides a Lua-friendly interface to Neovim's options system.</Info>
+
+## Line Numbers
+
+### Relative Line Numbers
+```lua
+opt.relativenumber = true
+```
+Displays line numbers relative to the current cursor position. Makes it easy to use motion commands like `10j` or `5k`.
+
+### Absolute Line Numbers
+```lua
+opt.number = true
+```
+Displays the absolute line number for the current line (works in combination with relative numbers).
+
+## UI Configuration
+
+### Command Height
+```lua
+opt.cmdheight = 0
+```
+Sets the command line height to 0, hiding it when not in use for a cleaner interface.
+
+### Status Line
+```lua
+opt.laststatus = 0
+```
+Hides the status line completely for a minimal appearance.
+
+### Window Bar
+```lua
+opt.winbar = "%f %h%m%r%=%l,%c %P"
+```
+Configures the window bar to show:
+- `%f` - File path
+- `%h` - Help buffer flag
+- `%m` - Modified flag
+- `%r` - Readonly flag
+- `%=` - Right align following items
+- `%l,%c` - Line and column number
+- `%P` - Percentage through file
+
+### Sign Column
+```lua
+opt.signcolumn = "yes"
+```
+Always shows the sign column (used for git signs, diagnostics, etc.) to prevent text shifting when signs appear.
+
+### Background
+```lua
+opt.background = "dark"
+```
+Sets the background to dark mode. Colorschemes use this to select appropriate colors.
+
+## Tabs & Indentation
+
+### Tab Stop
+```lua
+opt.tabstop = 2
+```
+Sets the number of spaces a tab character represents to 2.
+
+### Shift Width
+```lua
+opt.shiftwidth = 2
+```
+Sets the number of spaces to use for each indentation level to 2.
+
+### Expand Tab
+```lua
+opt.expandtab = true
+```
+Converts tabs to spaces automatically.
+
+### Auto Indent
+```lua
+opt.autoindent = true
+```
+Copies the indentation from the current line when starting a new line.
+
+<Tip>Use `:h autoindent` in Neovim for detailed help on auto-indentation behavior.</Tip>
+
+## Text Wrapping
+
+```lua
+opt.wrap = false
+```
+Disables line wrapping. Long lines will extend beyond the screen width.
+
+## Search Settings
+
+### Ignore Case
+```lua
+opt.ignorecase = true
+```
+Makes searches case-insensitive by default.
+
+### Smart Case
+```lua
+opt.smartcase = true
+```
+Overrides `ignorecase` when the search pattern contains uppercase letters. This enables:
+- `/hello` - matches "hello", "Hello", "HELLO" (case-insensitive)
+- `/Hello` - matches only "Hello" (case-sensitive)
+
+## File Management
+
+### Swap Files
+```lua
+opt.swapfile = false
+```
+Disables swap file creation. Modern systems with good stability may not need swap files.
+
+<Warning>Disabling swap files means you won't have Neovim's crash recovery. Make sure you save frequently or use an auto-save plugin.</Warning>
+
+## Clipboard
+
+```lua
+opt.clipboard:append("unnamedplus")
+```
+Integrates Neovim's unnamed register with the system clipboard. This enables:
+- `y` (yank) copies to system clipboard
+- `p` (paste) pastes from system clipboard
+- Seamless copying between Neovim and other applications
+
+## Split Windows
+
+### Split Right
+```lua
+opt.splitright = true
+```
+Opens vertical splits to the right of the current window (instead of left).
+
+### Split Below
+```lua
+opt.splitbelow = true
+```
+Opens horizontal splits below the current window (instead of above).
+
+## Backspace Behavior
+
+```lua
+opt.backspace = "indent,eol,start"
+```
+Configures backspace to work intuitively:
+- `indent` - Allow backspacing over autoindent
+- `eol` - Allow backspacing over line breaks (join lines)
+- `start` - Allow backspacing over the start of insert mode
+
+## LSP Configuration
+
+```lua
+vim.lsp.set_log_level("error")
+```
+Sets the LSP log level to only show errors, suppressing warnings for a cleaner experience.
+
+## File Explorer
+
+```lua
+vim.cmd("let g:netrw_liststyle = 3")
+```
+Sets netrw (Neovim's built-in file explorer) to tree-style listing.
+
+<Note>This configuration is present but nvim-luffy primarily uses nvim-tree as the file explorer.</Note>
+
+## Disabled Options
+
+These options are commented out but available for activation:
+
+```lua
+-- opt.cursorline = true
+-- opt.termguicolors = true
+```
+
+- `cursorline` - Would highlight the line containing the cursor
+- `termguicolors` - Would enable 24-bit RGB colors in the terminal
+
+## Summary Table
+
+| Category | Option | Value | Purpose |
+|----------|--------|-------|----------|
+| **Line Numbers** | `relativenumber` | `true` | Show relative line numbers |
+| | `number` | `true` | Show absolute line number on cursor line |
+| **UI** | `cmdheight` | `0` | Hide command line when not in use |
+| | `laststatus` | `0` | Hide status line |
+| | `signcolumn` | `"yes"` | Always show sign column |
+| | `background` | `"dark"` | Dark mode |
+| **Indentation** | `tabstop` | `2` | Tab width in spaces |
+| | `shiftwidth` | `2` | Indent width in spaces |
+| | `expandtab` | `true` | Convert tabs to spaces |
+| | `autoindent` | `true` | Copy indent to new line |
+| **Text** | `wrap` | `false` | Disable line wrapping |
+| **Search** | `ignorecase` | `true` | Case-insensitive search |
+| | `smartcase` | `true` | Case-sensitive if pattern has uppercase |
+| **Files** | `swapfile` | `false` | Disable swap files |
+| **Clipboard** | `clipboard` | `"unnamedplus"` | Use system clipboard |
+| **Splits** | `splitright` | `true` | Open vertical splits on right |
+| | `splitbelow` | `true` | Open horizontal splits below |

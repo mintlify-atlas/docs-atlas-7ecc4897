@@ -1,0 +1,365 @@
+---
+title: Flash
+description: Lightning-fast navigation with enhanced search motions
+---
+
+Flash is a modern navigation plugin that lets you jump to any location in visible text with just a few keystrokes. It enhances Vim's motion commands with visual hints and supports treesitter-aware jumping.
+
+## Purpose
+
+Flash provides lightning-fast navigation in nvim-luffy:
+
+- Jump to any visible location with 2-3 keystrokes
+- Enhanced f/F/t/T motions with labels
+- Treesitter-aware jumping to functions, classes, etc.
+- Incremental selection with `<C-space>`
+- Remote operations for advanced text object manipulation
+
+<Note>
+Flash is a modern alternative to plugins like vim-sneak and hop.nvim, combining the best features with superior performance.
+</Note>
+
+## Configuration
+
+<Accordion title="View Full Configuration">
+```lua ~/workspace/source/lua/leyland/plugins/flash.lua
+return {
+	"folke/flash.nvim",
+	event = "VeryLazy",
+	vscode = true,
+	opts = {
+		modes = {
+			char = {
+				char_actions = function(motion)
+					return {
+						[";"] = "next",
+						[","] = "prev",
+					}
+				end,
+			},
+		},
+	},
+	keys = {
+		{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+		{ "S", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+		{ "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+		{ "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+		{ "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+		{ "<c-space>", mode = { "n", "o", "x" },
+			function()
+				require("flash").treesitter({
+					actions = {
+						["<c-space>"] = "next",
+						["<BS>"] = "prev"
+					}
+				}) 
+			end, desc = "Treesitter Incremental Selection" },
+	},
+}
+```
+</Accordion>
+
+## Key Features
+
+### Enhanced Character Motions
+
+Flash enhances f/F/t/T with visual labels:
+
+```lua
+char_actions = {
+  [";"] = "next",
+  [","] = "prev",
+}
+```
+
+Use `;` and `,` to cycle through matches, just like standard Vim.
+
+### Treesitter Integration
+
+Flash leverages Treesitter to understand code structure, allowing you to jump to:
+- Functions
+- Classes
+- Variables
+- Blocks
+- Other AST nodes
+
+### VSCode Support
+
+```lua
+vscode = true
+```
+
+Flash works in VSCode Neovim extension.
+
+## Keybindings
+
+### Basic Navigation
+
+| Key | Modes | Action | Description |
+|-----|-------|--------|-------------|
+| `s` | n/x/o | Flash Jump | Jump to any visible location |
+| `S` | n/x/o | Treesitter Jump | Jump to treesitter nodes |
+
+### Character Motions
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `f{char}` | Normal | Find forward | Jump forward to character (enhanced with labels) |
+| `F{char}` | Normal | Find backward | Jump backward to character |
+| `t{char}` | Normal | Till forward | Jump before character forward |
+| `T{char}` | Normal | Till backward | Jump before character backward |
+| `;` | Normal | Next | Repeat last motion forward |
+| `,` | Normal | Previous | Repeat last motion backward |
+
+<Tip>
+Flash enhances standard f/t motions by showing labels when multiple matches exist, making navigation faster.
+</Tip>
+
+### Operator-Pending Mode
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `r` | Operator | Remote Flash | Select remote locations for operations |
+| `R` | Operator/Visual | Treesitter Search | Search using treesitter |
+
+### Selection
+
+| Key | Modes | Action | Description |
+|-----|-------|--------|-------------|
+| `<C-space>` | n/x/o | Incremental Selection | Expand selection to next treesitter node |
+| `<BS>` | During selection | Previous | Contract selection to previous node |
+
+### Search Integration
+
+| Key | Mode | Action | Description |
+|-----|------|--------|-------------|
+| `<C-s>` | Command | Toggle Flash | Toggle flash labels during search |
+
+## Usage Examples
+
+### Basic Flash Jump
+
+<Note>
+Press `s` and type the character(s) where you want to jump. Flash shows labels for each match.
+</Note>
+
+```plaintext
+Jump to any location:
+1. Press 's'
+2. Type the first character where you want to go
+3. Flash shows labels (a, b, c, d...)
+4. Press the label to jump
+
+Example:
+- Press 's'
+- Type 'f' (to jump to 'function')
+- See labels appear on all 'f' characters
+- Press 'a' to jump to the first one
+```
+
+### Two-Character Jump
+
+<Tip>
+Type two characters for more precise jumps with fewer labels.
+</Tip>
+
+```plaintext
+More precise jumping:
+1. Press 's'
+2. Type 'fu' (first two characters)
+3. Fewer matches = fewer labels
+4. Jump is faster and more accurate
+```
+
+### Treesitter Jump
+
+```plaintext
+Jump to code structures:
+1. Press 'S' (capital S)
+2. Flash highlights treesitter nodes:
+   - Functions
+   - Classes  
+   - Variables
+   - Blocks
+3. Labels appear on each node
+4. Press label to jump
+
+Example in JavaScript:
+Press 'S' to see labels on:
+- function declarations
+- arrow functions
+- class definitions
+- if/for blocks
+```
+
+### Enhanced f/t Motions
+
+<Note>
+Flash automatically enhances standard f/t motions when multiple matches exist.
+</Note>
+
+```plaintext
+Using enhanced f:
+1. Press 'f' then 'a' (find 'a')
+2. If multiple 'a' characters visible:
+   - Labels appear on each
+   - Press label to jump to that one
+3. If only one 'a':
+   - Jumps directly (no labels needed)
+
+Repeat motions:
+- Press ';' to cycle to next match
+- Press ',' to cycle to previous match
+```
+
+### Incremental Selection
+
+<Tip>
+`<C-space>` provides smart code selection similar to VS Code's "Expand Selection" feature.
+</Tip>
+
+```plaintext
+Expand selection intelligently:
+1. Position cursor in a function
+2. Press Ctrl+Space
+3. Selection expands to:
+   - Current word
+   - Then expression
+   - Then statement
+   - Then function body
+   - Then entire function
+4. Press Ctrl+Space repeatedly to grow
+5. Press Backspace to shrink
+
+Example:
+// Cursor on 'value'
+const result = calculateValue(param);
+
+Ctrl+Space presses:
+1. Selects 'value'
+2. Selects 'calculateValue'
+3. Selects 'calculateValue(param)'
+4. Selects entire statement
+```
+
+### Remote Operations
+
+```plaintext
+Operate on remote locations:
+1. Press 'd' (delete) or 'c' (change)
+2. Press 'r' (remote flash)
+3. Flash shows labels
+4. Press labels to select multiple locations
+5. Press Enter to execute operation
+
+Example - Delete multiple words:
+1. Press 'd' then 'r'
+2. Flash labels appear on all words
+3. Press 'a' 'c' 'e' to select 3 words
+4. Press Enter to delete all selected
+```
+
+### Search Enhancement
+
+```plaintext
+During search (/ or ?):
+1. Start typing your search
+2. Press Ctrl+s to toggle Flash
+3. Labels appear on search matches
+4. Press label to jump to that match
+```
+
+## Advanced Patterns
+
+### Quick Function Navigation
+
+<Tip>
+Combine treesitter jump with flash for rapid function navigation.
+</Tip>
+
+```plaintext
+Navigate between functions:
+1. Press 'S' for treesitter jump
+2. Labels appear on all functions
+3. Jump to any function instantly
+
+Much faster than:
+- Scrolling
+- Using ]], [[
+- Searching with /
+```
+
+### Visual Mode Operations
+
+```plaintext
+Select to any location:
+1. Press 'v' for visual mode
+2. Press 's' for flash
+3. Jump to end location
+4. Selection made from start to end
+
+Example - Delete to specific word:
+1. Position cursor
+2. Press 'v'
+3. Press 's' then type target
+4. Press label
+5. Press 'd' to delete selection
+```
+
+### Multi-Edit with Remote
+
+```plaintext
+Change multiple locations:
+1. Press 'c' (change)
+2. Press 'r' (remote)
+3. Select multiple labels
+4. Press Enter
+5. Type replacement
+6. All locations updated
+```
+
+## Workflow Integration
+
+### With Harpoon
+
+```plaintext
+Combine for super-fast navigation:
+1. Use <leader>1-9 to switch files (Harpoon)
+2. Use 's' to jump within file (Flash)
+3. Never touch arrow keys or mouse
+```
+
+### With Telescope
+
+```plaintext
+Find and jump workflow:
+1. <leader><leader> to find file (Telescope)
+2. Open file
+3. 's' to jump to location (Flash)
+```
+
+### With LSP
+
+```plaintext
+Code navigation:
+1. 'gd' to go to definition
+2. 'S' to jump to specific function
+3. '<C-space>' to select code block
+```
+
+## Performance Tips
+
+<Note>
+Flash is optimized for speed. Most jumps complete in under 100ms.
+</Note>
+
+- Use two characters for fewer labels
+- Use treesitter jump ('S') for code structures
+- Single-character flash for short distances
+- f/t motions for same-line navigation
+
+## Related Plugins
+
+- [Treesitter](/plugins-reference/treesitter) - Powers treesitter jumps
+- [Harpoon](/plugins-reference/harpoon) - File-level navigation
+- [Telescope](/plugins-reference/telescope) - Project-wide search
